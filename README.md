@@ -1,5 +1,7 @@
 # Escoba
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/67620167-e5e5-42dd-9e91-8cf0962d486c/deploy-status)](https://app.netlify.com/projects/escoba/deploys)
+
 A web-based implementation of Escoba, a traditional Spanish card game played with a 40-card Spanish deck.
 
 ## Features
