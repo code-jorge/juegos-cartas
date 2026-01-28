@@ -1,0 +1,316 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+  background: var(--bg-gradient);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-3xl);
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.title {
+  color: var(--color-primary);
+  font-size: var(--font-size-4xl);
+  margin-bottom: 4px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.subtitle {
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+}
+
+.form {
+  background: var(--bg-glass);
+  padding: var(--spacing-2xl) var(--spacing-3xl);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+}
+
+.fieldGroup {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.label {
+  display: block;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-lg);
+}
+
+.nameInput {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-lg);
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  background: var(--bg-glass-dark);
+  color: var(--color-text);
+  outline: none;
+  transition: var(--transition-fast);
+}
+
+.nameInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.nameInput:focus {
+  border-color: var(--color-primary);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.optionButton {
+  padding: var(--spacing-md) 24px;
+  font-size: var(--font-size-lg);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  background: var(--bg-glass-dark);
+  color: var(--color-text);
+  font-weight: normal;
+  transition: var(--transition-fast);
+}
+
+.optionButton.active {
+  background: var(--color-primary);
+  color: var(--color-dark);
+  font-weight: bold;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.startButton {
+  width: 100%;
+  padding: var(--spacing-lg) 32px;
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  background: var(--bg-primary-gradient);
+  color: var(--color-dark);
+  box-shadow: var(--shadow-primary);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.startButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary-hover);
+}
+
+.rulesLink {
+  margin-top: var(--spacing-2xl);
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  text-decoration: underline;
+  transition: var(--transition-fast);
+}
+
+.rulesLink:hover {
+  color: var(--color-primary-dark);
+}
+
+/* Rules Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: var(--spacing-xl);
+}
+
+.modal {
+  background: var(--bg-gradient);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  color: var(--color-text);
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  padding: var(--spacing-xs);
+  transition: var(--transition-fast);
+}
+
+.closeButton:hover {
+  color: var(--color-text);
+}
+
+.modalTitle {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.rulesContent {
+  margin-bottom: var(--spacing-xl);
+}
+
+.rulesSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.rulesSection h3 {
+  color: var(--color-primary);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.rulesSection p {
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.rulesSection ul {
+  color: var(--color-text);
+  line-height: 1.8;
+  padding-left: var(--spacing-xl);
+}
+
+.rulesSection li {
+  margin-bottom: var(--spacing-xs);
+}
+
+.note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  margin-top: var(--spacing-sm);
+}
+
+.closeModalButton {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  background: var(--bg-primary-gradient);
+  color: var(--color-dark);
+  transition: var(--transition-fast);
+}
+
+.closeModalButton:hover {
+  transform: translateY(-1px);
+}
+
+/* Mobile styles */
+@media (max-width: 600px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+
+  .header {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+  }
+
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .form {
+    padding: var(--spacing-lg);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .fieldGroup {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .label {
+    font-size: var(--font-size-base);
+  }
+
+  .buttonGroup {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .optionButton {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-base);
+  }
+
+  .startButton {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+  }
+
+  .modal {
+    padding: var(--spacing-lg);
+    max-height: 80vh;
+  }
+
+  .modalTitle {
+    font-size: var(--font-size-xl);
+  }
+}
