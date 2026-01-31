@@ -39,7 +39,11 @@
 
 .playerName {
   color: var(--color-text);
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
 }
 
 .playerNameActive {
@@ -47,17 +51,24 @@
   text-shadow: 0 0 10px var(--color-primary);
 }
 
+.escobaIcons {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: var(--spacing-xs);
+}
+
+.escobaIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
 .cardRow {
   display: flex;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-md);
   justify-content: center;
 }
 
-.playerStats {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  margin-top: var(--spacing-xs);
-}
 
 /* Table */
 .tableArea {
@@ -110,8 +121,8 @@
 
 .deckStack {
   position: relative;
-  width: 80px;
-  height: 112px;
+  width: 106px;
+  height: 175px;
 }
 
 .deckStack > div:first-child,
@@ -134,8 +145,8 @@
 }
 
 .emptyDeck {
-  width: 78px;
-  height: 109px;
+  width: 102px;
+  height: 169px;
   border: 2px dashed var(--color-text-dim);
   border-radius: var(--radius-md);
   opacity: 0.4;
@@ -143,7 +154,7 @@
 
 .tableCards {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-lg);
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
@@ -168,33 +179,25 @@
 /* Player hand */
 .playerHandSection {
   text-align: center;
+  padding-top: var(--spacing-lg);
 }
 
 .handCards {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-lg);
   justify-content: center;
   margin-bottom: var(--spacing-md);
 }
 
 .playerActions {
-  margin-top: 10px;
-}
-
-.captureHint {
-  color: var(--color-success-light);
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--spacing-sm);
-}
-
-.actionButtons {
+  margin-top: var(--spacing-lg);
   display: flex;
-  gap: 10px;
+  align-items: center;
   justify-content: center;
 }
 
 .captureButton {
-  padding: 10px 24px;
+  padding: 12px 32px;
   font-size: var(--font-size-base);
   font-weight: bold;
   border-radius: var(--radius-md);
@@ -202,34 +205,36 @@
   cursor: pointer;
   background: var(--bg-success-gradient);
   color: var(--color-text);
+  transition: var(--transition-fast);
+  min-width: 160px;
 }
 
-.captureButton:disabled {
-  background: var(--bg-glass-dark);
-  cursor: not-allowed;
-  opacity: 0.5;
+.captureButton:hover {
+  transform: scale(1.02);
 }
 
 .dropButton {
-  padding: 10px 24px;
+  padding: 12px 32px;
   font-size: var(--font-size-base);
   border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
   background: var(--bg-info-gradient);
   color: var(--color-text);
+  transition: var(--transition-fast);
+  min-width: 160px;
+}
+
+.dropButton:hover {
+  opacity: 0.9;
 }
 
 .thinkingMessage {
   color: var(--color-primary);
-  margin-top: 10px;
-}
-
-.humanStats {
-  margin-top: var(--spacing-xl);
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Modal overlay */
@@ -544,10 +549,22 @@
   color: var(--color-primary);
 }
 
+.escobasInline {
+  font-weight: normal;
+  color: var(--color-success-light);
+}
+
 .playerCards {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+}
+
+.playerCards > * {
+  margin-left: -21px;
+}
+
+.playerCards > *:first-child {
+  margin-left: 0;
 }
 
 /* Legacy - keep for backwards compatibility */
@@ -661,19 +678,36 @@
   }
 
   .handCards {
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
   }
 
-  .actionButtons {
-    flex-direction: column;
+  .tableCards {
+    gap: var(--spacing-md);
+  }
+
+  .cardRow {
     gap: var(--spacing-sm);
+  }
+
+  .escobaIcon {
+    width: 16px;
+    height: 16px;
   }
 
   .captureButton,
   .dropButton {
-    padding: var(--spacing-sm) var(--spacing-lg);
+    padding: var(--spacing-sm) var(--spacing-xl);
     font-size: var(--font-size-sm);
+    min-width: 140px;
+  }
+
+  .playerCards > * {
+    margin-left: -14px;
+  }
+
+  .playerCards > *:first-child {
+    margin-left: 0;
   }
 
   .modalContent {

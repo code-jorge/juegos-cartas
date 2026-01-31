@@ -73,6 +73,7 @@ const createInitialState = (settings: GameSettings): GameState => {
     scores,
     roundNumber: 1,
     targetScore: TARGET_SCORE,
+    roundStarterIndex: 0,
   };
 
   // Deal cards to players
@@ -344,15 +345,19 @@ export const useGameState = () => {
       escobas: 0,
     }));
 
+    // Rotate which player goes first
+    const newStarterIndex = (gameState.roundStarterIndex + 1) % gameState.players.length;
+
     let newState: GameState = {
       ...gameState,
       phase: 'playing',
       players: newPlayers,
       deck,
       table: tableCards,
-      currentPlayerIndex: 0,
+      currentPlayerIndex: newStarterIndex,
       lastCapturingPlayerIndex: null,
       roundNumber: gameState.roundNumber + 1,
+      roundStarterIndex: newStarterIndex,
     };
 
     newState = dealCards(newState);

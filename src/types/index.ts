@@ -10,7 +10,7 @@ export interface Card {
   value: CardValue;
 }
 
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export type Difficulty = 'easy' | 'hard';
 
 export interface Player {
   id: string;
@@ -41,6 +41,7 @@ export interface GameState {
   scores: Record<string, number>;
   roundNumber: number;
   targetScore: number;
+  roundStarterIndex: number;
 }
 
 export interface CaptureResult {

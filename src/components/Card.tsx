@@ -6,6 +6,7 @@ interface CardProps {
   card: CardType;
   faceDown?: boolean;
   selected?: boolean;
+  selectedValid?: boolean;
   highlighted?: boolean;
   justPlayed?: boolean;
   settling?: boolean;
@@ -48,6 +49,7 @@ export const Card = ({
   card,
   faceDown = false,
   selected = false,
+  selectedValid = false,
   highlighted = false,
   justPlayed = false,
   settling = false,
@@ -55,12 +57,13 @@ export const Card = ({
   disabled = false,
   small = false,
 }: CardProps) => {
-  const scale = small ? 1 : 78 / SPRITE_CARD_WIDTH;
+  const scale = small ? 1 : 104 / SPRITE_CARD_WIDTH;
 
   const getStateClass = () => {
     if (justPlayed) return styles.justPlayed;
     if (highlighted) return styles.highlighted;
     if (settling) return styles.settling;
+    if (selectedValid) return styles.selectedValid;
     if (selected) return styles.selected;
     return styles.default;
   };

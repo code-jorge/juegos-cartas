@@ -68,6 +68,9 @@ export const GameBoard = ({
   const captures = selectedHandCard ? getAvailableCaptures() : [];
   const canMakeCapture = canCapture() && selectedTableCards.length > 0;
 
+  // Check if selected hand card has capture possibilities (for hint glow)
+  const handCardCanCapture = gameState.settings.userHints && !!selectedHandCard && captures.length > 0;
+
   const phase = aiAnimation?.phase;
   const capturedCardIds = aiAnimation?.capturedCards.map((c) => c.id) || [];
   const showPlayedCard = aiAnimation && phase !== 'done';
@@ -88,6 +91,13 @@ export const GameBoard = ({
               <div key={opponent.id} className={styles.opponentSection}>
                 <div className={`${styles.playerName} ${isActive ? styles.playerNameActive : ''}`}>
                   {opponent.name} ({gameState.scores[opponent.id]} puntos)
+                  {opponent.escobas > 0 && (
+                    <span className={styles.escobaIcons}>
+                      {Array.from({ length: opponent.escobas }).map((_, i) => (
+                        <img key={i} src="/escoba.png" alt="escoba" title="¡Escoba!" className={styles.escobaIcon} />
+                      ))}
+                    </span>
+                  )}
                 </div>
                 <div className={styles.cardRow}>
                   {opponent.hand.map((_, i) => (
@@ -99,7 +109,6 @@ export const GameBoard = ({
                     />
                   ))}
                 </div>
-                <div className={styles.playerStats}>Escobas: {opponent.escobas}</div>
               </div>
             );
           })}
@@ -178,36 +187,38 @@ export const GameBoard = ({
         <div className={styles.playerHandSection}>
           <div className={`${styles.playerName} ${isHumanTurn ? styles.playerNameActive : ''}`}>
             {humanPlayer.name} ({gameState.scores[humanPlayer.id]} puntos)
+            {humanPlayer.escobas > 0 && (
+              <span className={styles.escobaIcons}>
+                {Array.from({ length: humanPlayer.escobas }).map((_, i) => (
+                  <img key={i} src="/escoba.png" alt="escoba" title="¡Escoba!" className={styles.escobaIcon} />
+                ))}
+              </span>
+            )}
           </div>
           <div className={styles.handCards}>
-            {humanPlayer.hand.map((card) => (
-              <Card
-                key={card.id}
-                card={card}
-                selected={selectedHandCard?.id === card.id}
-                onClick={() => isHumanTurn && !aiAnimation && onSelectHandCard(card)}
-                disabled={!isHumanTurn || !!aiAnimation}
-              />
-            ))}
+            {humanPlayer.hand.map((card) => {
+              const isSelected = selectedHandCard?.id === card.id;
+              return (
+                <Card
+                  key={card.id}
+                  card={card}
+                  selected={isSelected && !handCardCanCapture}
+                  selectedValid={isSelected && handCardCanCapture}
+                  onClick={() => isHumanTurn && !aiAnimation && onSelectHandCard(card)}
+                  disabled={!isHumanTurn || !!aiAnimation}
+                />
+              );
+            })}
           </div>
 
           {isHumanTurn && selectedHandCard && !aiAnimation && (
             <div className={styles.playerActions}>
-              {gameState.settings.userHints && captures.length > 0 && (
-                <div className={styles.captureHint}>Captura posible</div>
-              )}
-              <div className={styles.actionButtons}>
-                <button
-                  onClick={() => canMakeCapture && onPlayCard(true)}
-                  disabled={!canMakeCapture}
-                  className={styles.captureButton}
-                >
-                  Capturar
-                </button>
-                <button onClick={() => onPlayCard(false)} className={styles.dropButton}>
-                  Soltar en mesa
-                </button>
-              </div>
+              <button
+                onClick={() => onPlayCard(canMakeCapture)}
+                className={canMakeCapture ? styles.captureButton : styles.dropButton}
+              >
+                {canMakeCapture ? 'Capturar' : 'Soltar carta'}
+              </button>
             </div>
           )}
 
@@ -217,8 +228,6 @@ export const GameBoard = ({
             </div>
           )}
         </div>
-
-        <div className={styles.humanStats}>Escobas: {humanPlayer.escobas}</div>
       </div>
 
       {gameState.phase === 'roundEnd' && (
@@ -285,30 +294,29 @@ const RoundEndModal = ({
       <div className={`${styles.modalContent} ${styles.modalContentWide}`}>
         <h2 className={styles.modalTitle}>Fin de la ronda {gameState.roundNumber}</h2>
 
-        {/* Total scores */}
-        <div className={styles.totalScores}>
-          {gameState.players.map((player) => {
-            const isWinner = hasWinner && winners.some((w) => w.id === player.id);
-            return (
-              <div
-                key={player.id}
-                className={`${styles.totalScoreCard} ${isWinner ? styles.winner : ''}`}
-              >
-                <div className={styles.totalScoreName}>{player.name}</div>
-                <div className={styles.totalScoreValue}>
-                  {gameState.scores[player.id]} puntos
+        {/* Cards section */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Cartas capturadas</h3>
+          <div className={styles.playersGrid}>
+            {gameState.players.map((player) => (
+              <div key={player.id} className={styles.playerRow}>
+                <div className={`${styles.playerRowName} ${player.isHuman ? styles.playerRowNameHuman : ''}`}>
+                  {player.name}
+                  {player.escobas > 0 && (
+                    <span className={styles.escobasInline}>
+                      {' '}- {player.escobas} escoba{player.escobas !== 1 && 's'}
+                    </span>
+                  )}
                 </div>
-                {isWinner && <div className={styles.winnerBadge}>Ganador</div>}
+                <div className={styles.playerCards}>
+                  {player.captured.map((card) => (
+                    <Card key={card.id} card={card} small />
+                  ))}
+                </div>
               </div>
-            );
-          })}
-        </div>
-
-        {hasWinner && (
-          <div className={styles.winnerAnnouncement}>
-            {humanWon ? '¡Has ganado la partida!' : `${winners[0].name} gana la partida`}
+            ))}
           </div>
-        )}
+        </div>
 
         {/* Categories section */}
         <div className={styles.section}>
@@ -341,39 +349,33 @@ const RoundEndModal = ({
           </div>
         </div>
 
-        {/* Escobas section */}
+        {/* Total scores */}
         <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Escobas</h3>
-          <div className={styles.escobasRow}>
-            {gameState.players.map((p) => (
-              <div key={p.id} className={styles.escobaCard}>
-                <div className={styles.escobaLabel}>{p.name}</div>
-                <div className={p.escobas > 0 ? styles.escobaValueActive : styles.escobaValueInactive}>
-                  {p.escobas} escoba{p.escobas !== 1 && 's'}
+          <h3 className={styles.sectionTitle}>Puntuación</h3>
+          <div className={styles.totalScores}>
+            {gameState.players.map((player) => {
+              const isWinner = hasWinner && winners.some((w) => w.id === player.id);
+              return (
+                <div
+                  key={player.id}
+                  className={`${styles.totalScoreCard} ${isWinner ? styles.winner : ''}`}
+                >
+                  <div className={styles.totalScoreName}>{player.name}</div>
+                  <div className={styles.totalScoreValue}>
+                    {gameState.scores[player.id]} puntos
+                  </div>
+                  {isWinner && <div className={styles.winnerBadge}>Ganador</div>}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* Cards section */}
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Cartas capturadas</h3>
-          <div className={styles.playersGrid}>
-            {gameState.players.map((player) => (
-              <div key={player.id} className={styles.playerRow}>
-                <div className={`${styles.playerRowName} ${player.isHuman ? styles.playerRowNameHuman : ''}`}>
-                  {player.name}
-                </div>
-                <div className={styles.playerCards}>
-                  {player.captured.map((card) => (
-                    <Card key={card.id} card={card} small />
-                  ))}
-                </div>
-              </div>
-            ))}
+        {hasWinner && (
+          <div className={styles.winnerAnnouncement}>
+            {humanWon ? '¡Has ganado la partida!' : `${winners[0].name} gana la partida`}
           </div>
-        </div>
+        )}
 
         <div className={styles.modalActions}>
           <button onClick={onNewRound} className={styles.primaryButton}>
@@ -408,6 +410,30 @@ const GameEndModal = ({
           {winners.map((w) => w.name).join(', ')} - {maxScore} puntos
         </p>
 
+        {/* Cards section */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Cartas capturadas</h3>
+          <div className={styles.playersGrid}>
+            {gameState.players.map((player) => (
+              <div key={player.id} className={styles.playerRow}>
+                <div className={`${styles.playerRowName} ${player.isHuman ? styles.playerRowNameHuman : ''}`}>
+                  {player.name}
+                  {player.escobas > 0 && (
+                    <span className={styles.escobasInline}>
+                      {' '}- {player.escobas} escoba{player.escobas !== 1 && 's'}
+                    </span>
+                  )}
+                </div>
+                <div className={styles.playerCards}>
+                  {player.captured.map((card) => (
+                    <Card key={card.id} card={card} small />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Categories section */}
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>Categorías</h3>
@@ -436,40 +462,6 @@ const GameEndModal = ({
                 {categoryWinners.sieteDeVelo?.name || '-'}
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Escobas section */}
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Escobas</h3>
-          <div className={styles.escobasRow}>
-            {gameState.players.map((p) => (
-              <div key={p.id} className={styles.escobaCard}>
-                <div className={styles.escobaLabel}>{p.name}</div>
-                <div className={p.escobas > 0 ? styles.escobaValueActive : styles.escobaValueInactive}>
-                  {p.escobas} escoba{p.escobas !== 1 && 's'}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Cards section */}
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Cartas capturadas</h3>
-          <div className={styles.playersGrid}>
-            {gameState.players.map((player) => (
-              <div key={player.id} className={styles.playerRow}>
-                <div className={`${styles.playerRowName} ${player.isHuman ? styles.playerRowNameHuman : ''}`}>
-                  {player.name}
-                </div>
-                <div className={styles.playerCards}>
-                  {player.captured.map((card) => (
-                    <Card key={card.id} card={card} small />
-                  ))}
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 

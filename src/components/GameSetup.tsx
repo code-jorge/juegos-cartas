@@ -8,14 +8,13 @@ interface GameSetupProps {
 
 const DIFFICULTY_OPTIONS: { value: Difficulty; label: string }[] = [
   { value: 'easy', label: 'Fácil' },
-  { value: 'medium', label: 'Normal' },
   { value: 'hard', label: 'Difícil' },
 ];
 
 export const GameSetup = ({ onStartGame }: GameSetupProps) => {
   const [playerName, setPlayerName] = useState('');
   const [numOpponents, setNumOpponents] = useState<1 | 2 | 3>(1);
-  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [userHints, setUserHints] = useState(true);
   const [showRules, setShowRules] = useState(false);
 
