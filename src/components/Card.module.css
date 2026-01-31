@@ -70,24 +70,24 @@
 /* Mobile styles */
 @media (max-width: 600px) {
   .card.normal {
-    transform: scale(0.7);
+    transform: scale(0.6);
     transform-origin: center bottom;
-    margin: -10px -12px;
+    margin: -15px -18px;
   }
 
   .card.small {
-    transform: scale(0.75);
+    transform: scale(0.65);
     transform-origin: center bottom;
-    margin: -5px -6px;
+    margin: -8px -9px;
   }
 
   .card.normal.selected,
   .card.normal.selectedValid {
-    transform: scale(0.7) translateY(-8px);
+    transform: scale(0.6) translateY(-8px);
   }
 
   .card.normal.highlighted,
   .card.normal.justPlayed {
-    transform: scale(0.7) translateY(-12px);
+    transform: scale(0.6) translateY(-12px);
   }
 }
