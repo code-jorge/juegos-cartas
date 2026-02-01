@@ -1,0 +1,84 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+  padding: 1rem;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 400px;
+  border: 2px solid rgba(255, 107, 107, 0.5);
+}
+
+.icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  color: #ff6b6b;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.message {
+  color: #e8e8e8;
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.playerName {
+  color: #f4d03f;
+  font-weight: bold;
+}
+
+.waitingText {
+  color: #a0a0a0;
+  font-size: 0.9rem;
+  margin: 1rem 0 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.dots {
+  display: inline-block;
+  width: 1.5rem;
+}
+
+.dots::after {
+  content: '';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
+}
+
+.leaveButton {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: #ff6b6b;
+  border: 2px solid #ff6b6b;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.leaveButton:hover {
+  background: #ff6b6b;
+  color: white;
+}

@@ -34,8 +34,9 @@ export const GameSetup = ({ onStartGame }: GameSetupProps) => {
 
       <div className={styles.form}>
         <div className={styles.fieldGroup}>
-          <label className={styles.label}>Tu nombre:</label>
+          <label htmlFor="player-name" className={styles.label}>Tu nombre:</label>
           <input
+            id="player-name"
             type="text"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
@@ -103,12 +104,18 @@ export const GameSetup = ({ onStartGame }: GameSetupProps) => {
 
 const RulesModal = ({ onClose }: { onClose: () => void }) => {
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className={styles.closeButton}>
+    <div className={styles.modalOverlay} onClick={onClose} role="presentation">
+      <div
+        className={styles.modal}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rules-modal-title"
+      >
+        <button onClick={onClose} className={styles.closeButton} aria-label="Cerrar">
           ×
         </button>
-        <h2 className={styles.modalTitle}>¿Cómo jugar a la Escoba?</h2>
+        <h2 id="rules-modal-title" className={styles.modalTitle}>¿Cómo jugar a la Escoba?</h2>
 
         <div className={styles.rulesContent}>
           <section className={styles.rulesSection}>

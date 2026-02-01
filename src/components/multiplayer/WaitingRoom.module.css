@@ -1,0 +1,253 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+  padding: 1rem;
+}
+
+.content {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+}
+
+.title {
+  text-align: center;
+  color: #f4d03f;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
+}
+
+.gameId {
+  text-align: center;
+  color: #a0a0a0;
+  margin: 0 0 1.5rem 0;
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+
+.shareSection {
+  margin-bottom: 1.5rem;
+}
+
+.shareLabel {
+  color: #e8e8e8;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.shareLink {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.linkInput {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.85rem;
+  font-family: monospace;
+}
+
+.linkInput:focus {
+  outline: none;
+  border-color: #f4d03f;
+}
+
+.copyButton {
+  padding: 0.75rem 1rem;
+  background: #f4d03f;
+  color: #1a472a;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+  white-space: nowrap;
+}
+
+.copyButton:hover {
+  transform: translateY(-1px);
+}
+
+.playersSection {
+  margin-bottom: 1.5rem;
+}
+
+.playersTitle {
+  color: #e8e8e8;
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+}
+
+.playerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playerItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.playerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.kickButton {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(220, 53, 69, 0.3);
+  color: #ff6b6b;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kickButton:hover {
+  background: rgba(220, 53, 69, 0.5);
+  transform: scale(1.1);
+}
+
+.playerName {
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.creatorBadge {
+  background: #f4d03f;
+  color: #1a472a;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.youBadge {
+  background: #4a9eff;
+  color: white;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.readyStatus {
+  font-size: 0.9rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+}
+
+.ready {
+  background: rgba(40, 167, 69, 0.2);
+  color: #51cf66;
+}
+
+.notReady {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.spectatorCount {
+  color: #a0a0a0;
+  font-size: 0.9rem;
+  margin: 0.75rem 0 0 0;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.readyToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  accent-color: #f4d03f;
+}
+
+.readyLabel {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.startingMessage {
+  color: #51cf66;
+  text-align: center;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.spectatorMessage {
+  color: #a0a0a0;
+  text-align: center;
+  margin: 0;
+}
+
+.leaveButton {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 2px solid #dc3545;
+  color: #dc3545;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.leaveButton:hover {
+  background: rgba(220, 53, 69, 0.1);
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 1.5rem;
+  }
+
+  .shareLink {
+    flex-direction: column;
+  }
+
+  .linkInput {
+    font-size: 0.75rem;
+  }
+}

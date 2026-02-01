@@ -1,0 +1,76 @@
+.timer {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  color: #a0a0a0;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.timerLow {
+  background: rgba(220, 53, 69, 0.3);
+  color: #ff6b6b;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.warningOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.warningModal {
+  background: #2d3748;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  text-align: center;
+  border: 2px solid #ffc107;
+}
+
+.warningTitle {
+  color: #ffc107;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.warningText {
+  color: #e8e8e8;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.warningButton {
+  padding: 0.75rem 2rem;
+  background: #ffc107;
+  color: #1a472a;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.warningButton:hover {
+  transform: translateY(-2px);
+}

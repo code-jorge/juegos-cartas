@@ -1,7 +1,13 @@
 import type { Player } from '../types';
+import type { ClientPlayer } from '../types/multiplayer';
 
 export interface CategoryWinner {
   winner: Player | null;
+  count: number;
+}
+
+export interface MultiplayerCategoryWinner {
+  winner: ClientPlayer | null;
   count: number;
 }
 
@@ -99,4 +105,48 @@ export const getGameWinners = (
   const winners = players.filter((p) => scores[p.id] === maxScore);
   const humanWon = winners.some((w) => w.isHuman);
   return { winners, maxScore, humanWon };
+}
+
+// Multiplayer versions that work with ClientPlayer
+
+const getMultiplayerCategoryWinner = (
+  counts: { player: ClientPlayer; count: number }[]
+): MultiplayerCategoryWinner => {
+  const maxCount = Math.max(...counts.map((c) => c.count));
+  const withMax = counts.filter((c) => c.count === maxCount);
+  if (withMax.length > 1) return { winner: null, count: maxCount };
+  return { winner: withMax[0].player, count: maxCount };
+}
+
+export const calculateMultiplayerCategoryWinners = (players: ClientPlayer[]) => {
+  const cardCounts = players.map((p) => ({ player: p, count: p.captured.length }));
+  const orosCounts = players.map((p) => ({
+    player: p,
+    count: p.captured.filter((c) => c.suit === 'oros').length,
+  }));
+  const sevenCounts = players.map((p) => ({
+    player: p,
+    count: p.captured.filter((c) => c.value === 7).length,
+  }));
+  const sieteDeVelo = players.find((p) =>
+    p.captured.some((c) => c.suit === 'oros' && c.value === 7)
+  );
+
+  return {
+    cards: getMultiplayerCategoryWinner(cardCounts),
+    oros: getMultiplayerCategoryWinner(orosCounts),
+    sevens: getMultiplayerCategoryWinner(sevenCounts),
+    sieteDeVelo,
+  };
+}
+
+export const getMultiplayerGameWinners = (
+  players: ClientPlayer[],
+  scores: Record<string, number>,
+  myPlayerId: string
+): { winners: ClientPlayer[]; maxScore: number; iWon: boolean } => {
+  const maxScore = Math.max(...Object.values(scores));
+  const winners = players.filter((p) => scores[p.id] === maxScore);
+  const iWon = winners.some((w) => w.id === myPlayerId);
+  return { winners, maxScore, iWon };
 }

@@ -45,7 +45,7 @@ export const GameBoard = ({
 }: GameBoardProps) => {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-  const humanPlayer = gameState.players.find((p) => p.isHuman)!;
+  const humanPlayer = gameState.players.find((p) => p.isHuman);
   const isHumanTurn = currentPlayer.isHuman;
 
   useEffect(() => {
@@ -63,6 +63,9 @@ export const GameBoard = ({
       return () => clearTimeout(timer);
     }
   }, [gameState, isHumanTurn, currentPlayer, onStartAITurn, onCheckRoundEnd, aiAnimation]);
+
+  // Guard against missing human player (should never happen in single-player mode)
+  if (!humanPlayer) return null;
 
   const opponents = gameState.players.filter((p) => !p.isHuman);
   const captures = selectedHandCard ? getAvailableCaptures() : [];
@@ -256,9 +259,9 @@ const ExitConfirmModal = ({
   onCancel: () => void;
 }) => {
   return (
-    <div className={styles.modalOverlay} onClick={onCancel}>
-      <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()}>
-        <h2 className={styles.confirmTitle}>¿Salir de la partida?</h2>
+    <div className={styles.modalOverlay} onClick={onCancel} role="presentation">
+      <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()} role="alertdialog" aria-modal="true" aria-labelledby="exit-confirm-title">
+        <h2 id="exit-confirm-title" className={styles.confirmTitle}>¿Salir de la partida?</h2>
         <p className={styles.confirmText}>
           Perderás todo el progreso de la partida actual.
         </p>
@@ -290,9 +293,9 @@ const RoundEndModal = ({
   const categoryWinners = calculateCategoryWinners(gameState.players);
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={`${styles.modalContent} ${styles.modalContentWide}`}>
-        <h2 className={styles.modalTitle}>Fin de la ronda {gameState.roundNumber}</h2>
+    <div className={styles.modalOverlay} role="presentation">
+      <div className={`${styles.modalContent} ${styles.modalContentWide}`} role="dialog" aria-modal="true" aria-labelledby="round-end-title">
+        <h2 id="round-end-title" className={styles.modalTitle}>Fin de la ronda {gameState.roundNumber}</h2>
 
         {/* Cards section */}
         <div className={styles.section}>
@@ -401,9 +404,9 @@ const GameEndModal = ({
   const categoryWinners = calculateCategoryWinners(gameState.players);
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={`${styles.modalContent} ${styles.modalContentWide}`}>
-        <h2 className={`${styles.modalTitle} ${styles.modalTitleLarge} ${humanWon ? '' : styles.scoreCardInactive}`}>
+    <div className={styles.modalOverlay} role="presentation">
+      <div className={`${styles.modalContent} ${styles.modalContentWide}`} role="dialog" aria-modal="true" aria-labelledby="game-end-title">
+        <h2 id="game-end-title" className={`${styles.modalTitle} ${styles.modalTitleLarge} ${humanWon ? '' : styles.scoreCardInactive}`}>
           {humanWon ? '¡Has ganado!' : 'Has perdido'}
         </h2>
         <p className={styles.modalSubtitle}>
