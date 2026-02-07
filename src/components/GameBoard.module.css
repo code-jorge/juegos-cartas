@@ -557,32 +557,12 @@
 .playerCards {
   display: flex;
   flex-wrap: wrap;
+  padding: 6px 21px;
 }
 
 .playerCards > * {
   margin-left: -21px;
-}
-
-.playerCards > *:first-child {
-  margin-left: 0;
-}
-
-/* Legacy - keep for backwards compatibility */
-.playerColumn {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
-.playerColumnName {
-  font-weight: bold;
-  font-size: var(--font-size-sm);
-  min-width: 80px;
-  text-align: right;
-}
-
-.playerColumnNameHuman {
-  color: var(--color-primary);
+  margin-top: 9px;
 }
 
 /* Exit confirmation modal */
