@@ -17,7 +17,7 @@ const handler = withErrorHandler(
     const result = await loadAndValidatePlayer(body.gameId, body.playerId, body.joinToken);
     if (result.error) return result.error;
     const { ctx } = result;
-    if (ctx.game.phase !== 'lobby') return errorResponse('Game has already started');
+    if (ctx.game.phase !== 'lobby') return errorResponse('La partida ya ha comenzado');
     const player = ctx.game.players.find((p) => p.id === body.playerId)!;
     player.isReady = body.ready;
     if (ctx.game.players.length >= 2 && ctx.game.players.every((p) => p.isReady)) {

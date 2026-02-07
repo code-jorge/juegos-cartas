@@ -258,6 +258,14 @@ const ExitConfirmModal = ({
   onConfirm: () => void;
   onCancel: () => void;
 }) => {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onCancel]);
+
   return (
     <div className={styles.modalOverlay} onClick={onCancel} role="presentation">
       <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()} role="alertdialog" aria-modal="true" aria-labelledby="exit-confirm-title">

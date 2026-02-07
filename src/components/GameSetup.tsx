@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Difficulty, GameSettings } from '../types';
 import styles from './GameSetup.module.css';
 
@@ -103,6 +103,14 @@ export const GameSetup = ({ onStartGame }: GameSetupProps) => {
 }
 
 const RulesModal = ({ onClose }: { onClose: () => void }) => {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   return (
     <div className={styles.modalOverlay} onClick={onClose} role="presentation">
       <div

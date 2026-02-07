@@ -33,14 +33,18 @@ export const validatePlayerId = (playerId: string | undefined | null): Validatio
   return { valid: true };
 };
 
+export interface PlayerValidationResult extends ValidationResult {
+  player?: MultiplayerGameState['players'][0];
+}
+
 export const validateIsPlayer = (
   game: MultiplayerGameState,
   playerId: string,
   joinToken: string
-): ValidationResult => {
+): PlayerValidationResult => {
   const player = game.players.find((p) => p.id === playerId && p.joinToken === joinToken);
   if (!player) return { valid: false, error: 'No eres un jugador en esta partida' };
-  return { valid: true };
+  return { valid: true, player };
 };
 
 export const validatePlayCard = (
@@ -55,7 +59,7 @@ export const validatePlayCard = (
   if (game.phase !== 'playing') return { valid: false, error: 'La partida no esta en fase de juego' };
   const currentPlayer = game.players[game.currentPlayerIndex];
   if (currentPlayer.id !== playerId) return { valid: false, error: 'No es tu turno' };
-  const player = game.players.find((p) => p.id === playerId);
+  const player = credCheck.player;
   if (!player) return { valid: false, error: 'Jugador no encontrado' };
   const card = player.hand.find((c) => c.id === cardId);
   if (!card) return { valid: false, error: 'Carta no esta en tu mano' };

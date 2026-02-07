@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { Card as CardType } from '../../types';
 import type { ClientGameState } from '../../types/multiplayer';
 import { Card } from '../Card';
@@ -287,6 +287,14 @@ const ExitConfirmModal = ({
   onCancel: () => void;
   inProgress: boolean;
 }) => {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onCancel]);
+
   return (
     <div className={styles.modalOverlay} onClick={onCancel} role="presentation">
       <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()} role="alertdialog" aria-modal="true" aria-labelledby="mp-exit-confirm-title">

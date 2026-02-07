@@ -18,7 +18,7 @@ const handler = withErrorHandler(
     if (result.error) return result.error;
     const { ctx } = result;
     const kickResult = kickPlayer(ctx.game, body.playerId, body.targetPlayerId);
-    if (!kickResult.success) return errorResponse(kickResult.error || 'Failed to kick player');
+    if (!kickResult.success) return errorResponse(kickResult.error || 'Error al expulsar jugador');
     await saveGame(ctx.game);
     return buildGameResponse(ctx);
   }),

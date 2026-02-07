@@ -19,7 +19,7 @@ const handler = withErrorHandler(
     if (result.error) return result.error;
     const { game } = result;
     const validation = validatePlayCard(game, body.playerId, body.joinToken, body.cardId, body.captureCardIds || []);
-    if (!validation.valid) return errorResponse(validation.error || 'Invalid move');
+    if (!validation.valid) return errorResponse(validation.error || 'Jugada invalida');
     executePlayCard(game, body.playerId, body.cardId, body.captureCardIds || []);
     const player = game.players.find((p) => p.id === body.playerId);
     if (player) player.lastSeen = Date.now();

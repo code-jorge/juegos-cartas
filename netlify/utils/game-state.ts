@@ -219,11 +219,11 @@ export const kickPlayer = (
   kickerId: string,
   targetPlayerId: string
 ): { success: boolean; error?: string } => {
-  if (game.creatorId !== kickerId) return { success: false, error: 'Only the host can kick players' };
-  if (game.phase !== 'lobby') return { success: false, error: 'Cannot kick players during a game' };
-  if (kickerId === targetPlayerId) return { success: false, error: 'Cannot kick yourself' };
+  if (game.creatorId !== kickerId) return { success: false, error: 'Solo el anfitrion puede expulsar jugadores' };
+  if (game.phase !== 'lobby') return { success: false, error: 'No se puede expulsar jugadores durante la partida' };
+  if (kickerId === targetPlayerId) return { success: false, error: 'No puedes expulsarte a ti mismo' };
   const playerIndex = game.players.findIndex((p) => p.id === targetPlayerId);
-  if (playerIndex === -1) return { success: false, error: 'Player not found' };
+  if (playerIndex === -1) return { success: false, error: 'Jugador no encontrado' };
   const kickedPlayer = game.players[playerIndex];
   game.players.splice(playerIndex, 1);
   delete game.scores[kickedPlayer.id];

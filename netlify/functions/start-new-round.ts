@@ -17,7 +17,7 @@ const handler = withErrorHandler(
     const result = await loadAndValidatePlayer(body.gameId, body.playerId, body.joinToken);
     if (result.error) return result.error;
     const { ctx } = result;
-    if (ctx.game.phase !== 'roundEnd') return errorResponse('Not at round end');
+    if (ctx.game.phase !== 'roundEnd') return errorResponse('La ronda no ha terminado');
     startNewRound(ctx.game);
     await saveGame(ctx.game);
     return buildGameResponse(ctx);

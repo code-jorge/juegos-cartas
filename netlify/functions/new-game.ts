@@ -17,7 +17,7 @@ const handler = withErrorHandler(
     const result = await loadAndValidatePlayer(body.gameId, body.playerId, body.joinToken);
     if (result.error) return result.error;
     const { ctx } = result;
-    if (ctx.game.phase !== 'gameEnd') return errorResponse('Game has not ended');
+    if (ctx.game.phase !== 'gameEnd') return errorResponse('La partida no ha terminado');
     resetGameForNewGame(ctx.game);
     await saveGame(ctx.game);
     return buildGameResponse(ctx);

@@ -11,12 +11,12 @@ export const errorResponse = (error: string, status = 400): Response =>
   jsonResponse({ error }, status);
 export const successResponse = (data: object = {}): Response =>
   jsonResponse({ success: true, ...data });
-export const methodNotAllowed = (): Response => errorResponse('Method not allowed', 405);
-export const missingParams = (): Response => errorResponse('Missing required parameters', 400);
-export const gameNotFound = (): Response => errorResponse('Game not found', 404);
-export const gameExpired = (): Response => errorResponse('Game has expired', 410);
-export const notAuthorized = (message = 'Not authorized'): Response => errorResponse(message, 403);
-export const serverError = (message = 'Internal server error'): Response => errorResponse(message, 500);
+export const methodNotAllowed = (): Response => errorResponse('Metodo no permitido', 405);
+export const missingParams = (): Response => errorResponse('Faltan parametros requeridos', 400);
+export const gameNotFound = (): Response => errorResponse('Partida no encontrada', 404);
+export const gameExpired = (): Response => errorResponse('La partida ha expirado', 410);
+export const notAuthorized = (message = 'No autorizado'): Response => errorResponse(message, 403);
+export const serverError = (message = 'Error interno del servidor'): Response => errorResponse(message, 500);
 
 export interface GameContext {
   game: MultiplayerGameState;
