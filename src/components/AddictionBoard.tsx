@@ -167,9 +167,6 @@ const FinishedModal = ({
         <li>
           Movimientos: <strong>{moves}</strong>
         </li>
-        <li>
-          Puntuación: <strong>{score}%</strong>
-        </li>
       </ul>
       <div className={styles.modalButtons}>
         <button onClick={onBack} className={styles.secondaryButton}>
