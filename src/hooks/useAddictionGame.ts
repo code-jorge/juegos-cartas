@@ -9,9 +9,11 @@ import {
   applyMove,
   getDestinationsForCard,
   getMovableCards,
+  getPlacedCount,
   getScorePercent,
   getSourcesForGap,
   isWon,
+  MAX_PLACEABLE,
   redeal as redealGrid,
 } from '../utils/addictionLogic';
 
@@ -127,6 +129,7 @@ export const useAddictionGame = (settings: AddictionSettings) => {
   const boardWon = isWon(state.grid);
   const canFinish = state.status === 'playing' && (boardWon || state.redealsLeft <= 0);
   const scorePercent = getScorePercent(state.grid);
+  const placedCount = getPlacedCount(state.grid);
 
   const { highlightedDestinations, highlightedSources, movableSet } = useMemo(() => {
     let destinations: Position[] = [];
@@ -161,6 +164,8 @@ export const useAddictionGame = (settings: AddictionSettings) => {
     boardWon,
     canFinish,
     scorePercent,
+    placedCount,
+    maxPlaceable: MAX_PLACEABLE,
     handleClick,
     newGame,
     redeal,

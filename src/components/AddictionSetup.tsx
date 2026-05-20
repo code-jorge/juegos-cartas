@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import type { AddictionSettings, ReshufflesOption } from '../types/addiction';
 import { COLS, ROWS } from '../types/addiction';
+import { BackButton } from './BackButton';
 import styles from './AddictionSetup.module.css';
 
 interface Props {
@@ -15,6 +16,7 @@ const RESHUFFLE_OPTIONS: { value: ReshufflesOption; label: string }[] = [
 ];
 
 export const AddictionSetup = ({ onStartGame }: Props) => {
+  const navigate = useNavigate();
   const [reshuffles, setReshuffles] = useState<ReshufflesOption>(3);
   const [showRules, setShowRules] = useState(false);
 
@@ -24,9 +26,7 @@ export const AddictionSetup = ({ onStartGame }: Props) => {
 
   return (
     <div className={styles.container}>
-      <Link to="/" className={styles.backLink}>
-        ← Otros juegos
-      </Link>
+      <BackButton label="Otros juegos" onClick={() => navigate('/')} />
 
       <div className={styles.header}>
         <h1 className={styles.title}>Addiction</h1>

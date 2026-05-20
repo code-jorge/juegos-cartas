@@ -1,0 +1,28 @@
+.backButton {
+  position: absolute;
+  top: var(--spacing-xl);
+  left: var(--spacing-xl);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  z-index: 2;
+}
+
+.backButton:hover {
+  background: var(--bg-glass-dark);
+  color: var(--color-primary);
+}
+
+@media (max-width: 600px) {
+  .backButton {
+    top: var(--spacing-md);
+    left: var(--spacing-md);
+    font-size: var(--font-size-sm);
+  }
+}

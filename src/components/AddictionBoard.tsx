@@ -3,6 +3,7 @@ import { useAddictionGame } from '../hooks/useAddictionGame';
 import { getGapRequirement, isLocked } from '../utils/addictionLogic';
 import type { AddictionSettings } from '../types/addiction';
 import { AddictionCard } from './AddictionCard';
+import { BackButton } from './BackButton';
 import { ConfirmModal } from './ConfirmModal';
 import styles from './AddictionBoard.module.css';
 
@@ -23,6 +24,8 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
     boardWon,
     canFinish,
     scorePercent,
+    placedCount,
+    maxPlaceable,
     handleClick,
     newGame,
     redeal,
@@ -47,9 +50,7 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
 
   return (
     <div className={styles.container}>
-      <button onClick={handleBackClick} className={styles.backLink}>
-        ← Otros juegos
-      </button>
+      <BackButton label="Addiction" onClick={handleBackClick} />
 
       <div className={styles.header}>
         <h1 className={styles.title}>Addiction</h1>
@@ -111,9 +112,12 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
       {state.status === 'finished' && (
         <FinishedModal
           score={scorePercent}
+          placed={placedCount}
+          total={maxPlaceable}
           won={boardWon}
           moves={state.moves}
           onNewGame={newGame}
+          onBack={onExit}
         />
       )}
 
@@ -132,14 +136,20 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
 
 const FinishedModal = ({
   score,
+  placed,
+  total,
   won,
   moves,
   onNewGame,
+  onBack,
 }: {
   score: number;
+  placed: number;
+  total: number;
   won: boolean;
   moves: number;
   onNewGame: () => void;
+  onBack: () => void;
 }) => (
   <div className={styles.modalOverlay}>
     <div className={styles.modal}>
@@ -147,14 +157,28 @@ const FinishedModal = ({
       <div className={styles.scoreDisplay}>
         <span className={styles.scoreValue}>{score}%</span>
       </div>
-      <p className={styles.modalText}>
-        {won
-          ? `¡Enhorabuena! Resolviste el tablero en ${moves} movimientos.`
-          : `Cartas colocadas: ${score}%. Movimientos: ${moves}.`}
-      </p>
-      <button onClick={onNewGame} className={styles.primaryButton}>
-        Nueva partida
-      </button>
+      {won && (
+        <p className={styles.modalText}>¡Enhorabuena! Resolviste todo el tablero.</p>
+      )}
+      <ul className={styles.statsList}>
+        <li>
+          Cartas colocadas: <strong>{placed} de {total}</strong>
+        </li>
+        <li>
+          Movimientos: <strong>{moves}</strong>
+        </li>
+        <li>
+          Puntuación: <strong>{score}%</strong>
+        </li>
+      </ul>
+      <div className={styles.modalButtons}>
+        <button onClick={onBack} className={styles.secondaryButton}>
+          Volver
+        </button>
+        <button onClick={onNewGame} className={styles.primaryButton}>
+          Nueva partida
+        </button>
+      </div>
     </div>
   </div>
 );

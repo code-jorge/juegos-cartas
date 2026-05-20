@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AIPlayAnimation, Card as CardType, GameState } from '../types';
 import { calculateCategoryWinners, getGameWinners } from '../utils/scoring';
+import { BackButton } from './BackButton';
 import { Card } from './Card';
 import { ConfirmModal } from './ConfirmModal';
 import styles from './GameBoard.module.css';
@@ -79,9 +80,7 @@ export const GameBoard = ({
 
   return (
     <div className={styles.container}>
-      <button onClick={() => setShowExitConfirm(true)} className={styles.menuButton}>
-        ← Menú
-      </button>
+      <BackButton label="Escoba" onClick={() => setShowExitConfirm(true)} />
 
       <div className={styles.content}>
         {/* Opponents */}

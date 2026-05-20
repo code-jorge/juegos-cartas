@@ -110,13 +110,16 @@ export const isWon = (grid: Grid): boolean => {
 
 export const hasValidMoves = (grid: Grid): boolean => getMovableCards(grid).length > 0;
 
-const MAX_PLACED = ROWS * (COLS - 1);
+export const MAX_PLACEABLE = ROWS * (COLS - 1);
 
-export const getScorePercent = (grid: Grid): number => {
+export const getPlacedCount = (grid: Grid): number => {
   let placed = 0;
   for (let r = 0; r < ROWS; r++) placed += getFrozenPrefixLength(grid, r);
-  return Math.round((placed / MAX_PLACED) * 100);
+  return placed;
 };
+
+export const getScorePercent = (grid: Grid): number =>
+  Math.round((getPlacedCount(grid) / MAX_PLACEABLE) * 100);
 
 export const redeal = (grid: Grid): Grid => {
   const frozenLengths: number[] = [];

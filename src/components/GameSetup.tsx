@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import type { Difficulty, GameSettings } from '../types';
+import { BackButton } from './BackButton';
 import styles from './GameSetup.module.css';
 
 interface GameSetupProps {
@@ -13,6 +14,7 @@ const DIFFICULTY_OPTIONS: { value: Difficulty; label: string }[] = [
 ];
 
 export const GameSetup = ({ onStartGame }: GameSetupProps) => {
+  const navigate = useNavigate();
   const [playerName, setPlayerName] = useState('');
   const [numOpponents, setNumOpponents] = useState<1 | 2 | 3>(1);
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
@@ -25,9 +27,7 @@ export const GameSetup = ({ onStartGame }: GameSetupProps) => {
 
   return (
     <div className={styles.container}>
-      <Link to="/" className={styles.backLink}>
-        ← Otros juegos
-      </Link>
+      <BackButton label="Otros juegos" onClick={() => navigate('/')} />
       <div className={styles.header}>
         <img src="/escoba.png" alt="Escoba" className={styles.logo} />
         <div>
