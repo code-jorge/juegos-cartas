@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { usePageTitle } from '../hooks/usePageTitle';
 import styles from './GameSelector.module.css';
 
 interface GameOption {
@@ -19,12 +20,14 @@ const GAMES: GameOption[] = [
   },
   {
     path: '/addiction-solitaire',
-    title: 'Addiction Solitaire',
+    title: 'Addiction',
     subtitle: 'Reordena las cartas por palo y valor',
   },
 ];
 
 export const GameSelector = () => {
+  usePageTitle();
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>

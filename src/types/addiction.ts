@@ -28,3 +28,9 @@ export interface AddictionGameState {
 
 export const ROWS = 4;
 export const COLS = 13;
+
+export type ReshufflesOption = 2 | 3 | typeof Infinity;
+
+export interface AddictionSettings {
+  initialReshuffles: ReshufflesOption;
+}

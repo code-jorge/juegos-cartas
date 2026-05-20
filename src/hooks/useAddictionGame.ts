@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import type {
   AddictionGameState,
+  AddictionSettings,
   AddictionStatus,
   Grid,
   Position,
@@ -16,33 +17,32 @@ import {
   redeal as redealGrid,
 } from '../utils/addictionLogic';
 
-const INITIAL_REDEALS = 2;
-
 const computeStatus = (grid: Grid, redealsLeft: number): AddictionStatus => {
   if (isWon(grid)) return 'won';
   if (!hasValidMoves(grid) && redealsLeft === 0) return 'lost';
   return 'playing';
 };
 
-const createInitialState = (): AddictionGameState => {
+const createInitialState = (settings: AddictionSettings): AddictionGameState => {
   const grid = dealInitial();
+  const reshuffles = settings.initialReshuffles;
   return {
     grid,
-    redealsLeft: INITIAL_REDEALS,
-    redealsTotal: INITIAL_REDEALS,
-    status: computeStatus(grid, INITIAL_REDEALS),
+    redealsLeft: reshuffles,
+    redealsTotal: reshuffles,
+    status: computeStatus(grid, reshuffles),
     moves: 0,
   };
 };
 
 const samePos = (a: Position, b: Position) => a.row === b.row && a.col === b.col;
 
-export const useAddictionGame = () => {
-  const [state, setState] = useState<AddictionGameState>(createInitialState);
+export const useAddictionGame = (settings: AddictionSettings) => {
+  const [state, setState] = useState<AddictionGameState>(() => createInitialState(settings));
   const [selected, setSelected] = useState<Position | null>(null);
 
   const newGame = () => {
-    setState(createInitialState());
+    setState(createInitialState(settings));
     setSelected(null);
   };
 

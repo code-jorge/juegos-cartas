@@ -1,12 +1,20 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useAddictionGame } from '../hooks/useAddictionGame';
 import { getGapRequirement } from '../utils/addictionLogic';
 import { COLS, ROWS } from '../types/addiction';
+import type { AddictionSettings } from '../types/addiction';
 import { AddictionCard } from './AddictionCard';
+import { ConfirmModal } from './ConfirmModal';
 import styles from './AddictionBoard.module.css';
 
-export const AddictionBoard = () => {
+interface Props {
+  settings: AddictionSettings;
+  onExit: () => void;
+}
+
+const formatRedeals = (n: number) => (n === Infinity ? '∞' : `${n}`);
+
+export const AddictionBoard = ({ settings, onExit }: Props) => {
   const {
     state,
     selected,
@@ -16,9 +24,11 @@ export const AddictionBoard = () => {
     handleClick,
     newGame,
     redeal,
-  } = useAddictionGame();
+  } = useAddictionGame(settings);
 
   const [showRules, setShowRules] = useState(false);
+  const [showHints, setShowHints] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   const isHighlightedAt = (positions: typeof highlightedDestinations, row: number, col: number) =>
     positions.some((p) => p.row === row && p.col === col);
@@ -26,20 +36,28 @@ export const AddictionBoard = () => {
   const isSelectedAt = (row: number, col: number) =>
     selected !== null && selected.row === row && selected.col === col;
 
+  const handleBackClick = () => {
+    if (state.status === 'playing') {
+      setShowExitConfirm(true);
+    } else {
+      onExit();
+    }
+  };
+
   return (
     <div className={styles.container}>
-      <Link to="/" className={styles.backLink}>
+      <button onClick={handleBackClick} className={styles.backLink}>
         ← Otros juegos
-      </Link>
+      </button>
 
       <div className={styles.header}>
-        <h1 className={styles.title}>Addiction Solitaire</h1>
+        <h1 className={styles.title}>Addiction</h1>
         <div className={styles.stats}>
           <span>
             Movimientos: <strong>{state.moves}</strong>
           </span>
           <span>
-            Repartos: <strong>{state.redealsLeft}/{state.redealsTotal}</strong>
+            Repartos: <strong>{formatRedeals(state.redealsLeft)}/{formatRedeals(state.redealsTotal)}</strong>
           </span>
           <button onClick={() => setShowRules(true)} className={styles.rulesLink}>
             ¿Cómo jugar?
@@ -61,7 +79,7 @@ export const AddictionBoard = () => {
                     isSelected={isSelectedAt(r, c)}
                     isDestination={isHighlightedAt(highlightedDestinations, r, c)}
                     isSource={isHighlightedAt(highlightedSources, r, c)}
-                    isMovableHint={movableSet.has(`${r}-${c}`)}
+                    isMovableHint={showHints && movableSet.has(`${r}-${c}`)}
                     isDeadGap={isDeadGap}
                   />
                 );
@@ -77,10 +95,14 @@ export const AddictionBoard = () => {
           disabled={state.redealsLeft <= 0 || state.status !== 'playing'}
           className={styles.primaryButton}
         >
-          Repartir ({state.redealsLeft})
+          Repartir ({formatRedeals(state.redealsLeft)})
         </button>
-        <button onClick={newGame} className={styles.secondaryButton}>
-          Nueva partida
+        <button
+          onClick={() => setShowHints((v) => !v)}
+          className={showHints ? styles.hintButtonActive : styles.hintButton}
+          aria-pressed={showHints}
+        >
+          {showHints ? 'Ocultar pistas' : 'Pistas'}
         </button>
       </div>
 
@@ -101,6 +123,16 @@ export const AddictionBoard = () => {
       )}
 
       {showRules && <RulesModal onClose={() => setShowRules(false)} />}
+
+      {showExitConfirm && (
+        <ConfirmModal
+          title="¿Salir de la partida?"
+          message="Perderás todo el progreso de la partida actual."
+          confirmLabel="Salir"
+          onConfirm={onExit}
+          onCancel={() => setShowExitConfirm(false)}
+        />
+      )}
     </div>
   );
 };
@@ -165,16 +197,16 @@ const RulesModal = ({ onClose }: { onClose: () => void }) => (
         <section>
           <h3>Repartir</h3>
           <p>
-            Si te atascas, puedes <strong>repartir</strong> (2 veces). Las cartas correctamente
-            colocadas desde el 2 inicial se quedan fijas; el resto se baraja y se reparte de nuevo,
-            con un hueco justo después de cada prefijo correcto.
+            Si te atascas, puedes <strong>repartir</strong>. Las cartas correctamente colocadas
+            desde el 2 inicial se quedan fijas; el resto se baraja y se reparte de nuevo, con un
+            hueco justo después de cada prefijo correcto.
           </p>
         </section>
         <section>
-          <h3>Cómo seleccionar</h3>
+          <h3>Pistas</h3>
           <p>
-            Toca una carta o un hueco. Si hay una sola jugada posible se realiza al instante; si hay
-            varias opciones, las verás resaltadas en verde para que elijas.
+            Si te quedas atascado, pulsa <strong>Pistas</strong> para resaltar las cartas que se
+            pueden mover.
           </p>
         </section>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { AIPlayAnimation, Card as CardType, GameState } from '../types';
 import { calculateCategoryWinners, getGameWinners } from '../utils/scoring';
 import { Card } from './Card';
+import { ConfirmModal } from './ConfirmModal';
 import styles from './GameBoard.module.css';
 
 interface GameBoardProps {
@@ -239,7 +240,10 @@ export const GameBoard = ({
       )}
 
       {showExitConfirm && (
-        <ExitConfirmModal
+        <ConfirmModal
+          title="¿Salir de la partida?"
+          message="Perderás todo el progreso de la partida actual."
+          confirmLabel="Salir"
           onConfirm={onResetGame}
           onCancel={() => setShowExitConfirm(false)}
         />
@@ -247,33 +251,6 @@ export const GameBoard = ({
     </div>
   );
 }
-
-const ExitConfirmModal = ({
-  onConfirm,
-  onCancel,
-}: {
-  onConfirm: () => void;
-  onCancel: () => void;
-}) => {
-  return (
-    <div className={styles.modalOverlay} onClick={onCancel}>
-      <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()}>
-        <h2 className={styles.confirmTitle}>¿Salir de la partida?</h2>
-        <p className={styles.confirmText}>
-          Perderás todo el progreso de la partida actual.
-        </p>
-        <div className={styles.confirmButtons}>
-          <button onClick={onCancel} className={styles.cancelButton}>
-            Cancelar
-          </button>
-          <button onClick={onConfirm} className={styles.exitButton}>
-            Salir
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const RoundEndModal = ({
   gameState,

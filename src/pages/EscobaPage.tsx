@@ -1,8 +1,11 @@
 import { GameSetup } from '../components/GameSetup';
 import { GameBoard } from '../components/GameBoard';
 import { useGameState } from '../hooks/useGameState';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export const EscobaPage = () => {
+  usePageTitle('Escoba');
+
   const {
     gameState,
     selectedTableCards,
