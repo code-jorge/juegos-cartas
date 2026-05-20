@@ -1,0 +1,137 @@
+.cell {
+  width: 64px;
+  height: 88px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  flex-shrink: 0;
+}
+
+.card {
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.gap {
+  background: rgba(0, 0, 0, 0.25);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.gap:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.deadGap {
+  background: rgba(0, 0, 0, 0.45);
+  border-color: rgba(255, 255, 255, 0.12);
+  cursor: default;
+}
+
+.deadGap:hover {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.red {
+  color: #c62828;
+}
+
+.black {
+  color: #1a1a1a;
+}
+
+.corner {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.rank {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cornerSuit {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.suit {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.selectedCard {
+  box-shadow: 0 0 0 3px var(--color-primary), 0 6px 14px rgba(255, 215, 0, 0.55);
+  transform: translateY(-3px);
+}
+
+.selectedGap {
+  box-shadow: 0 0 0 3px var(--color-primary);
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.destinationHighlight {
+  box-shadow: 0 0 0 3px var(--color-success);
+  background: rgba(76, 175, 80, 0.28);
+  border-color: rgba(76, 175, 80, 0.7);
+}
+
+.sourceHighlight {
+  box-shadow: 0 0 0 3px var(--color-success);
+  transform: translateY(-3px);
+}
+
+.movableHint {
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.55), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 1100px) {
+  .cell {
+    width: 52px;
+    height: 72px;
+  }
+  .rank {
+    font-size: 14px;
+  }
+  .cornerSuit {
+    font-size: 11px;
+  }
+  .suit {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 800px) {
+  .cell {
+    width: 44px;
+    height: 60px;
+  }
+  .corner {
+    top: 2px;
+    left: 4px;
+  }
+  .rank {
+    font-size: 12px;
+  }
+  .cornerSuit {
+    font-size: 10px;
+  }
+  .suit {
+    font-size: 18px;
+  }
+}

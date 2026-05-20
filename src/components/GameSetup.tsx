@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { Difficulty, GameSettings } from '../types';
 import styles from './GameSetup.module.css';
 
@@ -24,6 +25,9 @@ export const GameSetup = ({ onStartGame }: GameSetupProps) => {
 
   return (
     <div className={styles.container}>
+      <Link to="/" className={styles.backLink}>
+        ← Otros juegos
+      </Link>
       <div className={styles.header}>
         <img src="/escoba.png" alt="Escoba" className={styles.logo} />
         <div>

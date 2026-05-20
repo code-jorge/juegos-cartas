@@ -1,48 +1,19 @@
-import { GameSetup } from './components/GameSetup';
-import { GameBoard } from './components/GameBoard';
-import { useGameState } from './hooks/useGameState';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { GameSelector } from './components/GameSelector';
+import { EscobaPage } from './pages/EscobaPage';
+import { AddictionSolitairePage } from './pages/AddictionSolitairePage';
 
 const App = () => {
-  const {
-    gameState,
-    selectedTableCards,
-    selectedHandCard,
-    aiAnimation,
-    startGame,
-    resetGame,
-    toggleTableCardSelection,
-    selectHandCard,
-    canCapture,
-    getAvailableCaptures,
-    playCard,
-    startAITurn,
-    advanceAIAnimation,
-    checkAndHandleRoundEnd,
-    startNewRound,
-  } = useGameState();
-
-  if (!gameState) {
-    return <GameSetup onStartGame={startGame} />;
-  }
-
   return (
-    <GameBoard
-      gameState={gameState}
-      selectedTableCards={selectedTableCards}
-      selectedHandCard={selectedHandCard}
-      aiAnimation={aiAnimation}
-      onToggleTableCard={toggleTableCardSelection}
-      onSelectHandCard={selectHandCard}
-      onPlayCard={playCard}
-      onStartAITurn={startAITurn}
-      onAdvanceAIAnimation={advanceAIAnimation}
-      onCheckRoundEnd={checkAndHandleRoundEnd}
-      onNewRound={startNewRound}
-      onResetGame={resetGame}
-      canCapture={canCapture}
-      getAvailableCaptures={getAvailableCaptures}
-    />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<GameSelector />} />
+        <Route path="/escoba" element={<EscobaPage />} />
+        <Route path="/addiction-solitaire" element={<AddictionSolitairePage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
