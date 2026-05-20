@@ -23,6 +23,16 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
+.locked {
+  cursor: default;
+  box-shadow: 0 0 0 2px var(--color-success), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.locked:hover {
+  transform: none;
+  box-shadow: 0 0 0 2px var(--color-success), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .gap {
   background: rgba(0, 0, 0, 0.25);
   border: 2px dashed rgba(255, 255, 255, 0.3);

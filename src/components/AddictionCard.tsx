@@ -31,6 +31,7 @@ interface Props {
   isSource: boolean;
   isMovableHint: boolean;
   isDeadGap: boolean;
+  isLocked: boolean;
 }
 
 export const AddictionCard = ({
@@ -41,6 +42,7 @@ export const AddictionCard = ({
   isSource,
   isMovableHint,
   isDeadGap,
+  isLocked,
 }: Props) => {
   if (card === null) {
     const classes = [styles.cell, styles.gap];
@@ -53,6 +55,7 @@ export const AddictionCard = ({
   const isRed = card.suit === 'hearts' || card.suit === 'diamonds';
   const classes = [styles.cell, styles.card];
   classes.push(isRed ? styles.red : styles.black);
+  if (isLocked) classes.push(styles.locked);
   if (isSelected) classes.push(styles.selectedCard);
   if (isSource) classes.push(styles.sourceHighlight);
   if (isMovableHint) classes.push(styles.movableHint);

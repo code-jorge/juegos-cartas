@@ -16,7 +16,7 @@ export interface Position {
   col: number;
 }
 
-export type AddictionStatus = 'playing' | 'won' | 'lost';
+export type AddictionStatus = 'playing' | 'finished';
 
 export interface AddictionGameState {
   grid: Grid;

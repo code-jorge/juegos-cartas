@@ -30,18 +30,36 @@ const findAll = (grid: Grid, predicate: (card: FrenchCard) => boolean): Position
   return positions;
 };
 
+export const getFrozenPrefixLength = (grid: Grid, row: number): number => {
+  const first = grid[row][0];
+  if (!first || first.rank !== 2) return 0;
+  const suit = first.suit;
+  let len = 1;
+  for (let c = 1; c < COLS; c++) {
+    const card = grid[row][c];
+    if (!card || card.suit !== suit || card.rank !== c + 2) break;
+    len++;
+  }
+  return len;
+};
+
+export const isLocked = (grid: Grid, row: number, col: number): boolean =>
+  col < getFrozenPrefixLength(grid, row);
+
 export const getSourcesForGap = (grid: Grid, gapRow: number, gapCol: number): Position[] => {
   const req = getGapRequirement(grid, gapRow, gapCol);
   if (!req) return [];
-  if (req.kind === 'any-2') {
-    return findAll(grid, (card) => card.rank === 2);
-  }
-  return findAll(grid, (card) => card.suit === req.card.suit && card.rank === req.card.rank);
+  const matches =
+    req.kind === 'any-2'
+      ? findAll(grid, (card) => card.rank === 2)
+      : findAll(grid, (card) => card.suit === req.card.suit && card.rank === req.card.rank);
+  return matches.filter((p) => !isLocked(grid, p.row, p.col));
 };
 
 export const getDestinationsForCard = (grid: Grid, row: number, col: number): Position[] => {
   const card = grid[row][col];
   if (!card) return [];
+  if (isLocked(grid, row, col)) return [];
   const destinations: Position[] = [];
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
@@ -82,19 +100,6 @@ export const applyMove = (grid: Grid, from: Position, to: Position): Grid => {
   return next;
 };
 
-const getFrozenPrefixLength = (grid: Grid, row: number): number => {
-  const first = grid[row][0];
-  if (!first || first.rank !== 2) return 0;
-  const suit = first.suit;
-  let len = 1;
-  for (let c = 1; c < COLS; c++) {
-    const card = grid[row][c];
-    if (!card || card.suit !== suit || card.rank !== c + 2) break;
-    len++;
-  }
-  return len;
-};
-
 export const isWon = (grid: Grid): boolean => {
   for (let r = 0; r < ROWS; r++) {
     if (getFrozenPrefixLength(grid, r) !== 12) return false;
@@ -104,6 +109,14 @@ export const isWon = (grid: Grid): boolean => {
 };
 
 export const hasValidMoves = (grid: Grid): boolean => getMovableCards(grid).length > 0;
+
+const MAX_PLACED = ROWS * (COLS - 1);
+
+export const getScorePercent = (grid: Grid): number => {
+  let placed = 0;
+  for (let r = 0; r < ROWS; r++) placed += getFrozenPrefixLength(grid, r);
+  return Math.round((placed / MAX_PLACED) * 100);
+};
 
 export const redeal = (grid: Grid): Grid => {
   const frozenLengths: number[] = [];
@@ -127,9 +140,10 @@ export const redeal = (grid: Grid): Grid => {
     for (let c = 0; c < frozenLengths[r]; c++) {
       newRow.push(grid[r][c]);
     }
-    newRow.push(null);
-    while (newRow.length < COLS) {
-      newRow.push(shuffled[idx++]);
+    const looseSize = COLS - frozenLengths[r];
+    const gapOffset = Math.floor(Math.random() * looseSize);
+    for (let i = 0; i < looseSize; i++) {
+      newRow.push(i === gapOffset ? null : shuffled[idx++]);
     }
     next.push(newRow);
   }

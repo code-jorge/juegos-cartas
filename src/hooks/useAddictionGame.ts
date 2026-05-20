@@ -2,8 +2,6 @@ import { useMemo, useState } from 'react';
 import type {
   AddictionGameState,
   AddictionSettings,
-  AddictionStatus,
-  Grid,
   Position,
 } from '../types/addiction';
 import { dealInitial } from '../utils/addictionDeck';
@@ -11,17 +9,11 @@ import {
   applyMove,
   getDestinationsForCard,
   getMovableCards,
+  getScorePercent,
   getSourcesForGap,
-  hasValidMoves,
   isWon,
   redeal as redealGrid,
 } from '../utils/addictionLogic';
-
-const computeStatus = (grid: Grid, redealsLeft: number): AddictionStatus => {
-  if (isWon(grid)) return 'won';
-  if (!hasValidMoves(grid) && redealsLeft === 0) return 'lost';
-  return 'playing';
-};
 
 const createInitialState = (settings: AddictionSettings): AddictionGameState => {
   const grid = dealInitial();
@@ -30,7 +22,7 @@ const createInitialState = (settings: AddictionSettings): AddictionGameState => 
     grid,
     redealsLeft: reshuffles,
     redealsTotal: reshuffles,
-    status: computeStatus(grid, reshuffles),
+    status: 'playing',
     moves: 0,
   };
 };
@@ -47,15 +39,11 @@ export const useAddictionGame = (settings: AddictionSettings) => {
   };
 
   const performMove = (from: Position, to: Position) => {
-    setState((prev) => {
-      const grid = applyMove(prev.grid, from, to);
-      return {
-        ...prev,
-        grid,
-        moves: prev.moves + 1,
-        status: computeStatus(grid, prev.redealsLeft),
-      };
-    });
+    setState((prev) => ({
+      ...prev,
+      grid: applyMove(prev.grid, from, to),
+      moves: prev.moves + 1,
+    }));
     setSelected(null);
   };
 
@@ -122,18 +110,23 @@ export const useAddictionGame = (settings: AddictionSettings) => {
 
   const redeal = () => {
     if (state.redealsLeft <= 0 || state.status !== 'playing') return;
-    setState((prev) => {
-      const grid = redealGrid(prev.grid);
-      const redealsLeft = prev.redealsLeft - 1;
-      return {
-        ...prev,
-        grid,
-        redealsLeft,
-        status: computeStatus(grid, redealsLeft),
-      };
-    });
+    setState((prev) => ({
+      ...prev,
+      grid: redealGrid(prev.grid),
+      redealsLeft: prev.redealsLeft - 1,
+    }));
     setSelected(null);
   };
+
+  const finishGame = () => {
+    if (state.status !== 'playing') return;
+    setState((prev) => ({ ...prev, status: 'finished' }));
+    setSelected(null);
+  };
+
+  const boardWon = isWon(state.grid);
+  const canFinish = state.status === 'playing' && (boardWon || state.redealsLeft <= 0);
+  const scorePercent = getScorePercent(state.grid);
 
   const { highlightedDestinations, highlightedSources, movableSet } = useMemo(() => {
     let destinations: Position[] = [];
@@ -165,8 +158,12 @@ export const useAddictionGame = (settings: AddictionSettings) => {
     highlightedDestinations,
     highlightedSources,
     movableSet,
+    boardWon,
+    canFinish,
+    scorePercent,
     handleClick,
     newGame,
     redeal,
+    finishGame,
   };
 };

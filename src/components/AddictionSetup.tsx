@@ -15,7 +15,7 @@ const RESHUFFLE_OPTIONS: { value: ReshufflesOption; label: string }[] = [
 ];
 
 export const AddictionSetup = ({ onStartGame }: Props) => {
-  const [reshuffles, setReshuffles] = useState<ReshufflesOption>(2);
+  const [reshuffles, setReshuffles] = useState<ReshufflesOption>(3);
   const [showRules, setShowRules] = useState(false);
 
   const handleStart = () => {

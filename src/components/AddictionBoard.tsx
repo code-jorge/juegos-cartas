@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAddictionGame } from '../hooks/useAddictionGame';
-import { getGapRequirement } from '../utils/addictionLogic';
-import { COLS, ROWS } from '../types/addiction';
+import { getGapRequirement, isLocked } from '../utils/addictionLogic';
 import type { AddictionSettings } from '../types/addiction';
 import { AddictionCard } from './AddictionCard';
 import { ConfirmModal } from './ConfirmModal';
@@ -21,13 +20,15 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
     highlightedDestinations,
     highlightedSources,
     movableSet,
+    boardWon,
+    canFinish,
+    scorePercent,
     handleClick,
     newGame,
     redeal,
+    finishGame,
   } = useAddictionGame(settings);
 
-  const [showRules, setShowRules] = useState(false);
-  const [showHints, setShowHints] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   const isHighlightedAt = (positions: typeof highlightedDestinations, row: number, col: number) =>
@@ -56,12 +57,6 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
           <span>
             Movimientos: <strong>{state.moves}</strong>
           </span>
-          <span>
-            Repartos: <strong>{formatRedeals(state.redealsLeft)}/{formatRedeals(state.redealsTotal)}</strong>
-          </span>
-          <button onClick={() => setShowRules(true)} className={styles.rulesLink}>
-            ¿Cómo jugar?
-          </button>
         </div>
       </div>
 
@@ -71,6 +66,7 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
             <div key={r} className={styles.row}>
               {row.map((cell, c) => {
                 const isDeadGap = cell === null && getGapRequirement(state.grid, r, c) === null;
+                const locked = cell !== null && isLocked(state.grid, r, c);
                 return (
                   <AddictionCard
                     key={`${r}-${c}`}
@@ -79,8 +75,9 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
                     isSelected={isSelectedAt(r, c)}
                     isDestination={isHighlightedAt(highlightedDestinations, r, c)}
                     isSource={isHighlightedAt(highlightedSources, r, c)}
-                    isMovableHint={showHints && movableSet.has(`${r}-${c}`)}
+                    isMovableHint={movableSet.has(`${r}-${c}`)}
                     isDeadGap={isDeadGap}
+                    isLocked={locked}
                   />
                 );
               })}
@@ -89,40 +86,36 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
         </div>
       </div>
 
+      {boardWon && state.status === 'playing' && (
+        <div className={styles.congrats}>
+          🎉 ¡Felicidades! Has resuelto el tablero.
+        </div>
+      )}
+
       <div className={styles.controls}>
-        <button
-          onClick={redeal}
-          disabled={state.redealsLeft <= 0 || state.status !== 'playing'}
-          className={styles.primaryButton}
-        >
-          Repartir ({formatRedeals(state.redealsLeft)})
-        </button>
-        <button
-          onClick={() => setShowHints((v) => !v)}
-          className={showHints ? styles.hintButtonActive : styles.hintButton}
-          aria-pressed={showHints}
-        >
-          {showHints ? 'Ocultar pistas' : 'Pistas'}
-        </button>
+        {canFinish ? (
+          <button onClick={finishGame} className={styles.primaryButton}>
+            Terminar partida
+          </button>
+        ) : (
+          <button
+            onClick={redeal}
+            disabled={state.status !== 'playing'}
+            className={styles.primaryButton}
+          >
+            Repartir ({formatRedeals(state.redealsLeft)})
+          </button>
+        )}
       </div>
 
-      {state.status === 'won' && (
-        <EndModal
-          title="¡Ganaste!"
-          message={`Completaste el juego en ${state.moves} movimientos.`}
+      {state.status === 'finished' && (
+        <FinishedModal
+          score={scorePercent}
+          won={boardWon}
+          moves={state.moves}
           onNewGame={newGame}
         />
       )}
-
-      {state.status === 'lost' && (
-        <EndModal
-          title="Sin movimientos"
-          message="No quedan jugadas válidas y has agotado los repartos."
-          onNewGame={newGame}
-        />
-      )}
-
-      {showRules && <RulesModal onClose={() => setShowRules(false)} />}
 
       {showExitConfirm && (
         <ConfirmModal
@@ -137,81 +130,30 @@ export const AddictionBoard = ({ settings, onExit }: Props) => {
   );
 };
 
-const EndModal = ({
-  title,
-  message,
+const FinishedModal = ({
+  score,
+  won,
+  moves,
   onNewGame,
 }: {
-  title: string;
-  message: string;
+  score: number;
+  won: boolean;
+  moves: number;
   onNewGame: () => void;
 }) => (
   <div className={styles.modalOverlay}>
     <div className={styles.modal}>
-      <h2 className={styles.modalTitle}>{title}</h2>
-      <p className={styles.modalText}>{message}</p>
+      <h2 className={styles.modalTitle}>{won ? '¡Ganaste!' : 'Partida terminada'}</h2>
+      <div className={styles.scoreDisplay}>
+        <span className={styles.scoreValue}>{score}%</span>
+      </div>
+      <p className={styles.modalText}>
+        {won
+          ? `¡Enhorabuena! Resolviste el tablero en ${moves} movimientos.`
+          : `Cartas colocadas: ${score}%. Movimientos: ${moves}.`}
+      </p>
       <button onClick={onNewGame} className={styles.primaryButton}>
         Nueva partida
-      </button>
-    </div>
-  </div>
-);
-
-const RulesModal = ({ onClose }: { onClose: () => void }) => (
-  <div className={styles.modalOverlay} onClick={onClose}>
-    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-      <button onClick={onClose} className={styles.closeButton} aria-label="cerrar">
-        ×
-      </button>
-      <h2 className={styles.modalTitle}>¿Cómo jugar?</h2>
-      <div className={styles.rulesContent}>
-        <section>
-          <h3>Objetivo</h3>
-          <p>
-            Ordena las {ROWS} filas, cada una con un palo, del <strong>2 al K</strong> empezando
-            por la izquierda.
-          </p>
-        </section>
-        <section>
-          <h3>Tablero</h3>
-          <p>
-            {ROWS}×{COLS}, 52 cartas sin los ases. Los 4 ases se retiran y dejan{' '}
-            <strong>4 huecos</strong>.
-          </p>
-        </section>
-        <section>
-          <h3>Movimientos</h3>
-          <ul>
-            <li>
-              Un hueco se llena con la carta del <strong>mismo palo</strong> y{' '}
-              <strong>rango +1</strong> respecto a la carta de su izquierda.
-            </li>
-            <li>
-              Un hueco en la <strong>primera columna</strong> acepta cualquier <strong>2</strong>.
-            </li>
-            <li>
-              Un hueco a la derecha de un <strong>Rey</strong> queda muerto: nada lo puede llenar.
-            </li>
-          </ul>
-        </section>
-        <section>
-          <h3>Repartir</h3>
-          <p>
-            Si te atascas, puedes <strong>repartir</strong>. Las cartas correctamente colocadas
-            desde el 2 inicial se quedan fijas; el resto se baraja y se reparte de nuevo, con un
-            hueco justo después de cada prefijo correcto.
-          </p>
-        </section>
-        <section>
-          <h3>Pistas</h3>
-          <p>
-            Si te quedas atascado, pulsa <strong>Pistas</strong> para resaltar las cartas que se
-            pueden mover.
-          </p>
-        </section>
-      </div>
-      <button onClick={onClose} className={styles.primaryButton}>
-        ¡Entendido!
       </button>
     </div>
   </div>
