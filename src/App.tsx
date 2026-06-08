@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { GameSelector } from './components/GameSelector';
 import { EscobaPage } from './pages/EscobaPage';
 import { AddictionSolitairePage } from './pages/AddictionSolitairePage';
+import { BlockadePage } from './pages/BlockadePage';
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
         <Route path="/" element={<GameSelector />} />
         <Route path="/escoba" element={<EscobaPage />} />
         <Route path="/addiction-solitaire" element={<AddictionSolitairePage />} />
+        <Route path="/blockade" element={<BlockadePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

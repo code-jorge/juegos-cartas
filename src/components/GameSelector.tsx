@@ -23,6 +23,11 @@ const GAMES: GameOption[] = [
     title: 'Addiction',
     subtitle: 'Reordena las cartas por palo y valor',
   },
+  {
+    path: '/blockade',
+    title: 'Blockade',
+    subtitle: 'Solitario a dos barajas: del As al Rey',
+  },
 ];
 
 export const GameSelector = () => {
