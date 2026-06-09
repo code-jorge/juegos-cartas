@@ -79,7 +79,15 @@ export const useBlockadeGame = (settings: BlockadeSettings) => {
     setSelected(null);
   };
 
-  const clearSelection = () => setSelected(null);
+  const handleEmptyColumnClick = (col: number) => {
+    if (state.status !== 'playing' || selected === null) return;
+    const destinations = getGroupDestinations(state, selected.col, selected.index);
+    if (destinations.some((d) => d.type === 'tableau' && d.col === col)) {
+      performMove(selected.col, selected.index, { type: 'tableau', col });
+      return;
+    }
+    setSelected(null);
+  };
 
   const deal = () => {
     if (state.status !== 'playing' || state.stock.length === 0) return;
@@ -130,7 +138,7 @@ export const useBlockadeGame = (settings: BlockadeSettings) => {
     scorePercent: getScorePercent(state),
     handleCardClick,
     handleFoundationClick,
-    clearSelection,
+    handleEmptyColumnClick,
     deal,
     newGame,
     giveUp,

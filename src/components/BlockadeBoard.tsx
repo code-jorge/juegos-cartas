@@ -23,7 +23,7 @@ export const BlockadeBoard = ({ settings, onExit }: Props) => {
     scorePercent,
     handleCardClick,
     handleFoundationClick,
-    clearSelection,
+    handleEmptyColumnClick,
     deal,
     newGame,
     giveUp,
@@ -88,7 +88,11 @@ export const BlockadeBoard = ({ settings, onExit }: Props) => {
           {state.tableau.map((pile, col) => (
             <div key={col} className={styles.column}>
               {pile.length === 0 ? (
-                <BlockadeCard card={null} onClick={clearSelection} />
+                <BlockadeCard
+                  card={null}
+                  onClick={() => handleEmptyColumnClick(col)}
+                  isDestination={destinationTableau.has(col)}
+                />
               ) : (
                 pile.map((card, idx) => {
                   const key = `${col}-${idx}`;

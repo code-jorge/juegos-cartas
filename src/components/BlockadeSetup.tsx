@@ -98,8 +98,10 @@ const RulesModal = ({ onClose }: { onClose: () => void }) => (
         <section className={styles.rulesSection}>
           <h3>El bloqueo</h3>
           <p>
-            Cuando una columna queda vacía se <strong>rellena al instante con una carta del mazo</strong>:
-            no puedes usarla como espacio libre. Cuando el mazo se agota, los huecos quedan muertos.
+            Mientras quedan cartas en el mazo, cualquier columna vacía se{' '}
+            <strong>rellena al instante con una carta del mazo</strong>: no puedes usarla como
+            espacio libre. Cuando el mazo se agota, en una columna vacía puedes colocar{' '}
+            <strong>cualquier carta o secuencia</strong>.
           </p>
         </section>
         <section className={styles.rulesSection}>

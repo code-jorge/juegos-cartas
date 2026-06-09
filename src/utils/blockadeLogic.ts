@@ -79,11 +79,20 @@ export const getGroupDestinations = (
   }
 
   // Tableau builds DOWN by suit; the head card lands on a card one rank higher.
-  // Empty columns can't be filled by the player (the blockade rule).
+  // An empty column (only possible once the stock is gone) takes any card or run;
+  // surface a single one to avoid cluttering the board with identical options.
+  let emptyColumnOffered = false;
   for (let c = 0; c < state.tableau.length; c++) {
     if (c === col) continue;
-    const top = topCard(state.tableau[c]);
-    if (top && top.suit === head.suit && top.rank === head.rank + 1) {
+    const dst = state.tableau[c];
+    if (dst.length === 0) {
+      if (emptyColumnOffered) continue;
+      emptyColumnOffered = true;
+      dests.push({ type: 'tableau', col: c });
+      continue;
+    }
+    const top = topCard(dst) as Card;
+    if (top.suit === head.suit && top.rank === head.rank + 1) {
       dests.push({ type: 'tableau', col: c });
     }
   }
