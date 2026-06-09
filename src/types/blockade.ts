@@ -29,6 +29,6 @@ export const NUM_FOUNDATIONS = 8;
 export const TOTAL_CARDS = 104;
 
 export interface BlockadeSettings {
-  /** Automatically send Aces that reach the top of a column to the foundations. */
-  autoPlayAces: boolean;
+  /** Highlight the cards/runs that currently have a legal move. */
+  highlightMovable: boolean;
 }

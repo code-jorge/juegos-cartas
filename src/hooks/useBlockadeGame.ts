@@ -5,79 +5,85 @@ import {
   cardsOnFoundations,
   dealInitialState,
   dealRow,
-  getDestinations,
-  getMovableColumns,
+  getGroupDestinations,
+  getMovableCardKeys,
   getScorePercent,
+  isMovableRun,
   progress,
   type Dest,
 } from '../utils/blockadeLogic';
 
-const createInitialState = (settings: BlockadeSettings): BlockadeGameState =>
-  progress(dealInitialState(), settings);
+interface Selection {
+  col: number;
+  index: number;
+}
 
 export const useBlockadeGame = (settings: BlockadeSettings) => {
-  const [state, setState] = useState<BlockadeGameState>(() => createInitialState(settings));
-  const [selected, setSelected] = useState<number | null>(null);
+  const [state, setState] = useState<BlockadeGameState>(() => progress(dealInitialState()));
+  const [selected, setSelected] = useState<Selection | null>(null);
 
   const newGame = () => {
-    setState(createInitialState(settings));
+    setState(progress(dealInitialState()));
     setSelected(null);
   };
 
-  const performMove = (col: number, dest: Dest) => {
+  const performMove = (col: number, index: number, dest: Dest) => {
     setState((prev) => {
-      const moved = applyMove(prev, col, dest);
+      const moved = applyMove(prev, col, index, dest);
       moved.moves += 1;
-      return progress(moved, settings);
+      return progress(moved);
     });
     setSelected(null);
   };
 
-  const startSelection = (col: number) => {
-    const destinations = getDestinations(state, col);
+  const startSelection = (col: number, index: number) => {
+    if (!isMovableRun(state.tableau[col], index)) return;
+    const destinations = getGroupDestinations(state, col, index);
     if (destinations.length === 1) {
-      performMove(col, destinations[0]);
+      performMove(col, index, destinations[0]);
     } else if (destinations.length > 1) {
-      setSelected(col);
+      setSelected({ col, index });
     }
   };
 
-  const handleColumnClick = (col: number) => {
+  const handleCardClick = (col: number, index: number) => {
     if (state.status !== 'playing') return;
 
     if (selected === null) {
-      startSelection(col);
+      startSelection(col, index);
       return;
     }
 
-    if (selected === col) {
+    if (selected.col === col && selected.index === index) {
       setSelected(null);
       return;
     }
 
-    const destinations = getDestinations(state, selected);
+    const destinations = getGroupDestinations(state, selected.col, selected.index);
     if (destinations.some((d) => d.type === 'tableau' && d.col === col)) {
-      performMove(selected, { type: 'tableau', col });
+      performMove(selected.col, selected.index, { type: 'tableau', col });
       return;
     }
 
     setSelected(null);
-    startSelection(col);
+    startSelection(col, index);
   };
 
   const handleFoundationClick = (index: number) => {
     if (state.status !== 'playing' || selected === null) return;
-    const destinations = getDestinations(state, selected);
+    const destinations = getGroupDestinations(state, selected.col, selected.index);
     if (destinations.some((d) => d.type === 'foundation' && d.index === index)) {
-      performMove(selected, { type: 'foundation', index });
+      performMove(selected.col, selected.index, { type: 'foundation', index });
       return;
     }
     setSelected(null);
   };
 
+  const clearSelection = () => setSelected(null);
+
   const deal = () => {
     if (state.status !== 'playing' || state.stock.length === 0) return;
-    setState((prev) => progress(dealRow(prev), settings));
+    setState((prev) => progress(dealRow(prev)));
     setSelected(null);
   };
 
@@ -87,33 +93,44 @@ export const useBlockadeGame = (settings: BlockadeSettings) => {
     setSelected(null);
   };
 
-  const { destinationTableau, destinationFoundations, movableColumns } = useMemo(() => {
+  const { destinationTableau, destinationFoundations, selectedKeys, movableKeys } = useMemo(() => {
     const tableauDests = new Set<number>();
     const foundationDests = new Set<number>();
+    const selectedSet = new Set<string>();
+
     if (selected !== null) {
-      for (const dest of getDestinations(state, selected)) {
+      for (const dest of getGroupDestinations(state, selected.col, selected.index)) {
         if (dest.type === 'tableau') tableauDests.add(dest.col);
         else foundationDests.add(dest.index);
       }
+      const pile = state.tableau[selected.col];
+      for (let i = selected.index; i < pile.length; i++) selectedSet.add(`${selected.col}-${i}`);
     }
-    const movable = selected === null ? new Set(getMovableColumns(state)) : new Set<number>();
+
+    const movable =
+      settings.highlightMovable && selected === null
+        ? getMovableCardKeys(state)
+        : new Set<string>();
+
     return {
       destinationTableau: tableauDests,
       destinationFoundations: foundationDests,
-      movableColumns: movable,
+      selectedKeys: selectedSet,
+      movableKeys: movable,
     };
-  }, [state, selected]);
+  }, [state, selected, settings.highlightMovable]);
 
   return {
     state,
-    selected,
     destinationTableau,
     destinationFoundations,
-    movableColumns,
+    selectedKeys,
+    movableKeys,
     placedCount: cardsOnFoundations(state),
     scorePercent: getScorePercent(state),
-    handleColumnClick,
+    handleCardClick,
     handleFoundationClick,
+    clearSelection,
     deal,
     newGame,
     giveUp,

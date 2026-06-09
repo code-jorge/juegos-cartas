@@ -1,10 +1,4 @@
-import type {
-  BlockadeGameState,
-  BlockadeSettings,
-  Card,
-  Foundation,
-  Pile,
-} from '../types/blockade';
+import type { BlockadeGameState, Card, Foundation, Pile } from '../types/blockade';
 import { NUM_COLUMNS, NUM_FOUNDATIONS, TOTAL_CARDS } from '../types/blockade';
 import { createDoubleDeck, shuffle } from './blockadeDeck';
 
@@ -33,42 +27,65 @@ export const dealInitialState = (): BlockadeGameState => {
   return { tableau, foundations, stock, status: 'playing', moves: 0, deals: 0 };
 };
 
-const canPlaceOnFoundation = (card: Card, foundation: Foundation): boolean => {
+/**
+ * A movable chunk: cards from `index` to the top of the column form a run of the
+ * same suit, descending by one (e.g. 9♥ 8♥ 7♥). A single card is a run of one.
+ */
+export const isMovableRun = (pile: Pile, index: number): boolean => {
+  if (index < 0 || index >= pile.length) return false;
+  for (let k = index; k < pile.length - 1; k++) {
+    if (pile[k].suit !== pile[k + 1].suit || pile[k + 1].rank !== pile[k].rank - 1) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const canStartFoundation = (card: Card, foundation: Foundation): boolean => {
   const top = topCard(foundation);
   if (!top) return card.rank === 1; // only an Ace starts a foundation
   return top.suit === card.suit && card.rank === top.rank + 1;
 };
 
-/** Tableau builds DOWN by suit. Empty columns can't be filled by the player. */
-const canPlaceOnTableau = (card: Card, pile: Pile): boolean => {
-  const top = topCard(pile);
-  if (!top) return false;
-  return top.suit === card.suit && card.rank === top.rank - 1;
-};
+/**
+ * Legal destinations for the chunk that starts at `index` in column `col`.
+ * Foundations only accept a single card; runs longer than one go to the tableau.
+ */
+export const getGroupDestinations = (
+  state: BlockadeGameState,
+  col: number,
+  index: number,
+): Dest[] => {
+  const pile = state.tableau[col];
+  if (!isMovableRun(pile, index)) return [];
 
-/** Legal destinations for the top card of the given column. */
-export const getDestinations = (state: BlockadeGameState, col: number): Dest[] => {
-  const card = topCard(state.tableau[col]);
-  if (!card) return [];
-
+  const head = pile[index];
+  const size = pile.length - index;
   const dests: Dest[] = [];
 
-  // Foundations. For an Ace only surface a single empty slot (they're interchangeable).
-  let emptyFoundationOffered = false;
-  for (let i = 0; i < state.foundations.length; i++) {
-    const foundation = state.foundations[i];
-    if (!canPlaceOnFoundation(card, foundation)) continue;
-    if (foundation.length === 0) {
-      if (emptyFoundationOffered) continue;
-      emptyFoundationOffered = true;
+  // Foundations only take one card at a time. For an Ace, surface a single
+  // empty slot (the empty foundations are interchangeable).
+  if (size === 1) {
+    let emptyFoundationOffered = false;
+    for (let i = 0; i < state.foundations.length; i++) {
+      const foundation = state.foundations[i];
+      if (!canStartFoundation(head, foundation)) continue;
+      if (foundation.length === 0) {
+        if (emptyFoundationOffered) continue;
+        emptyFoundationOffered = true;
+      }
+      dests.push({ type: 'foundation', index: i });
     }
-    dests.push({ type: 'foundation', index: i });
   }
 
-  // Tableau columns (build down by suit).
+  // Tableau builds DOWN by suit; the head card lands on a card one rank higher.
+  // Empty columns can't be filled by the player (the blockade rule).
   for (let c = 0; c < state.tableau.length; c++) {
     if (c === col) continue;
-    if (canPlaceOnTableau(card, state.tableau[c])) dests.push({ type: 'tableau', col: c });
+    const top = topCard(state.tableau[c]);
+    if (top && top.suit === head.suit && top.rank === head.rank + 1) {
+      dests.push({ type: 'tableau', col: c });
+    }
   }
 
   return dests;
@@ -77,13 +94,14 @@ export const getDestinations = (state: BlockadeGameState, col: number): Dest[] =
 export const applyMove = (
   state: BlockadeGameState,
   col: number,
+  index: number,
   dest: Dest,
 ): BlockadeGameState => {
   const next = cloneState(state);
-  const card = next.tableau[col].pop();
-  if (!card) return next;
-  if (dest.type === 'foundation') next.foundations[dest.index].push(card);
-  else next.tableau[dest.col].push(card);
+  const group = next.tableau[col].splice(index);
+  if (group.length === 0) return next;
+  if (dest.type === 'foundation') next.foundations[dest.index].push(group[0]);
+  else next.tableau[dest.col].push(...group);
   return next;
 };
 
@@ -98,44 +116,13 @@ export const dealRow = (state: BlockadeGameState): BlockadeGameState => {
   return next;
 };
 
-const fillEmptyColumns = (state: BlockadeGameState): boolean => {
-  let changed = false;
-  for (let c = 0; c < NUM_COLUMNS; c++) {
-    if (state.tableau[c].length === 0 && state.stock.length > 0) {
-      state.tableau[c].push(state.stock.shift() as Card);
-      changed = true;
-    }
-  }
-  return changed;
-};
-
-const autoPlayAces = (state: BlockadeGameState): boolean => {
-  let changed = false;
-  for (let c = 0; c < NUM_COLUMNS; c++) {
-    const top = topCard(state.tableau[c]);
-    if (!top || top.rank !== 1) continue;
-    const slot = state.foundations.findIndex((f) => f.length === 0);
-    if (slot === -1) continue;
-    state.foundations[slot].push(state.tableau[c].pop() as Card);
-    changed = true;
-  }
-  return changed;
-};
-
-/**
- * Enforce the "blockade" rule: empty columns are filled immediately from the
- * stock. Optionally cascade Aces to the foundations (which can re-open columns).
- */
-export const settle = (
-  state: BlockadeGameState,
-  settings: BlockadeSettings,
-): BlockadeGameState => {
+/** Enforce the "blockade" rule: empty columns are refilled at once from the stock. */
+export const settle = (state: BlockadeGameState): BlockadeGameState => {
   const next = cloneState(state);
-  let changed = true;
-  while (changed) {
-    changed = false;
-    if (fillEmptyColumns(next)) changed = true;
-    if (settings.autoPlayAces && autoPlayAces(next)) changed = true;
+  for (let c = 0; c < NUM_COLUMNS; c++) {
+    if (next.tableau[c].length === 0 && next.stock.length > 0) {
+      next.tableau[c].push(next.stock.shift() as Card);
+    }
   }
   return next;
 };
@@ -146,31 +133,29 @@ export const cardsOnFoundations = (state: BlockadeGameState): number =>
 export const isWon = (state: BlockadeGameState): boolean =>
   cardsOnFoundations(state) === TOTAL_CARDS;
 
-export const hasAnyMove = (state: BlockadeGameState): boolean => {
+/** Keys ("col-index") of every card that begins a chunk with a legal move. */
+export const getMovableCardKeys = (state: BlockadeGameState): Set<string> => {
+  const keys = new Set<string>();
   for (let c = 0; c < NUM_COLUMNS; c++) {
-    if (getDestinations(state, c).length > 0) return true;
+    const pile = state.tableau[c];
+    for (let i = pile.length - 1; i >= 0; i--) {
+      if (!isMovableRun(pile, i)) break; // deeper cards can't form a run either
+      if (getGroupDestinations(state, c, i).length > 0) keys.add(`${c}-${i}`);
+    }
   }
-  return false;
+  return keys;
 };
+
+export const hasAnyMove = (state: BlockadeGameState): boolean =>
+  getMovableCardKeys(state).size > 0;
 
 /** Stuck = nothing to move and no cards left to deal. */
 export const isStuck = (state: BlockadeGameState): boolean =>
   state.stock.length === 0 && !hasAnyMove(state);
 
-export const getMovableColumns = (state: BlockadeGameState): number[] => {
-  const cols: number[] = [];
-  for (let c = 0; c < NUM_COLUMNS; c++) {
-    if (getDestinations(state, c).length > 0) cols.push(c);
-  }
-  return cols;
-};
-
 /** Settle the board, then resolve win/loss status. */
-export const progress = (
-  state: BlockadeGameState,
-  settings: BlockadeSettings,
-): BlockadeGameState => {
-  const settled = settle(state, settings);
+export const progress = (state: BlockadeGameState): BlockadeGameState => {
+  const settled = settle(state);
   if (isWon(settled)) return { ...settled, status: 'won' };
   if (isStuck(settled)) return { ...settled, status: 'lost' };
   return settled;

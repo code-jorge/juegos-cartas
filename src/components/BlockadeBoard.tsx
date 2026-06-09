@@ -15,14 +15,15 @@ interface Props {
 export const BlockadeBoard = ({ settings, onExit }: Props) => {
   const {
     state,
-    selected,
     destinationTableau,
     destinationFoundations,
-    movableColumns,
+    selectedKeys,
+    movableKeys,
     placedCount,
     scorePercent,
-    handleColumnClick,
+    handleCardClick,
     handleFoundationClick,
+    clearSelection,
     deal,
     newGame,
     giveUp,
@@ -35,6 +36,8 @@ export const BlockadeBoard = ({ settings, onExit }: Props) => {
     if (state.status === 'playing') setShowExitConfirm(true);
     else onExit();
   };
+
+  const stockEmpty = state.stock.length === 0;
 
   return (
     <div className={styles.container}>
@@ -56,78 +59,65 @@ export const BlockadeBoard = ({ settings, onExit }: Props) => {
       </div>
 
       <div className={styles.topRow}>
-        <div className={styles.foundations}>
-          {state.foundations.map((foundation, i) => (
-            <BlockadeCard
-              key={i}
-              card={topCard(foundation)}
-              placeholder="A"
-              isDestination={destinationFoundations.has(i)}
-              onClick={() => handleFoundationClick(i)}
-            />
-          ))}
-        </div>
+        <div className={styles.topRowInner}>
+          <div className={styles.foundations}>
+            {state.foundations.map((foundation, i) => (
+              <BlockadeCard
+                key={i}
+                card={topCard(foundation)}
+                placeholder="A"
+                isDestination={destinationFoundations.has(i)}
+                onClick={() => handleFoundationClick(i)}
+              />
+            ))}
+          </div>
 
-        <button
-          className={styles.stock}
-          onClick={deal}
-          disabled={state.status !== 'playing' || state.stock.length === 0}
-          aria-label="repartir fila"
-        >
-          {state.stock.length > 0 ? (
-            <>
-              <span className={styles.stockCount}>{state.stock.length}</span>
-              <span className={styles.stockLabel}>en mazo</span>
-            </>
-          ) : (
-            <span className={styles.stockEmpty}>vacío</span>
-          )}
-        </button>
+          <button
+            className={stockEmpty ? styles.stockEmpty : styles.stock}
+            onClick={deal}
+            disabled={state.status !== 'playing' || stockEmpty}
+            aria-label="repartir fila"
+          >
+            <span className={styles.stockEmblem}>{stockEmpty ? '∅' : '♠'}</span>
+          </button>
+        </div>
       </div>
 
       <div className={styles.boardWrap}>
         <div className={styles.board}>
-          {state.tableau.map((pile, col) => {
-            const isDest = destinationTableau.has(col);
-            const isMovable = movableColumns.has(col);
-            return (
-              <div
-                key={col}
-                className={styles.column}
-                onClick={() => handleColumnClick(col)}
-                role="button"
-                aria-label={`columna ${col + 1}`}
-              >
-                {pile.length === 0 ? (
-                  <BlockadeCard card={null} isDestination={isDest} />
-                ) : (
-                  pile.map((card, idx) => {
-                    const isTop = idx === pile.length - 1;
-                    return (
-                      <BlockadeCard
-                        key={card.id}
-                        card={card}
-                        isStacked
-                        isSelected={isTop && selected === col}
-                        isDestination={isTop && isDest}
-                        isMovableHint={isTop && isMovable}
-                      />
-                    );
-                  })
-                )}
-              </div>
-            );
-          })}
+          {state.tableau.map((pile, col) => (
+            <div key={col} className={styles.column}>
+              {pile.length === 0 ? (
+                <BlockadeCard card={null} onClick={clearSelection} />
+              ) : (
+                pile.map((card, idx) => {
+                  const key = `${col}-${idx}`;
+                  const isTop = idx === pile.length - 1;
+                  return (
+                    <BlockadeCard
+                      key={card.id}
+                      card={card}
+                      isStacked
+                      onClick={() => handleCardClick(col, idx)}
+                      isSelected={selectedKeys.has(key)}
+                      isDestination={isTop && destinationTableau.has(col)}
+                      isMovableHint={movableKeys.has(key)}
+                    />
+                  );
+                })
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
       <div className={styles.controls}>
         <button
           onClick={deal}
-          disabled={state.status !== 'playing' || state.stock.length === 0}
+          disabled={state.status !== 'playing' || stockEmpty}
           className={styles.primaryButton}
         >
-          Repartir fila ({state.stock.length})
+          Repartir fila
         </button>
         {state.status === 'playing' && (
           <button onClick={() => setShowGiveUpConfirm(true)} className={styles.secondaryButton}>

@@ -8,14 +8,14 @@ interface Props {
   onStartGame: (settings: BlockadeSettings) => void;
 }
 
-const ACE_OPTIONS: { value: boolean; label: string }[] = [
+const HIGHLIGHT_OPTIONS: { value: boolean; label: string }[] = [
   { value: true, label: 'Sí' },
   { value: false, label: 'No' },
 ];
 
 export const BlockadeSetup = ({ onStartGame }: Props) => {
   const navigate = useNavigate();
-  const [autoPlayAces, setAutoPlayAces] = useState(true);
+  const [highlightMovable, setHighlightMovable] = useState(true);
   const [showRules, setShowRules] = useState(false);
 
   return (
@@ -29,13 +29,13 @@ export const BlockadeSetup = ({ onStartGame }: Props) => {
 
       <div className={styles.form}>
         <div className={styles.fieldGroup}>
-          <label className={styles.label}>Mover los ases a las bases automáticamente:</label>
+          <label className={styles.label}>Resaltar las cartas que se pueden mover:</label>
           <div className={styles.buttonGroup}>
-            {ACE_OPTIONS.map(({ value, label }) => (
+            {HIGHLIGHT_OPTIONS.map(({ value, label }) => (
               <button
                 key={label}
-                onClick={() => setAutoPlayAces(value)}
-                className={`${styles.optionButton} ${autoPlayAces === value ? styles.active : ''}`}
+                onClick={() => setHighlightMovable(value)}
+                className={`${styles.optionButton} ${highlightMovable === value ? styles.active : ''}`}
               >
                 {label}
               </button>
@@ -43,7 +43,7 @@ export const BlockadeSetup = ({ onStartGame }: Props) => {
           </div>
         </div>
 
-        <button onClick={() => onStartGame({ autoPlayAces })} className={styles.startButton}>
+        <button onClick={() => onStartGame({ highlightMovable })} className={styles.startButton}>
           ¡Empezar partida!
         </button>
       </div>
@@ -86,7 +86,10 @@ const RulesModal = ({ onClose }: { onClose: () => void }) => (
               En las columnas se construye <strong>hacia abajo y por palo</strong> (un 7♥ sobre un
               8♥).
             </li>
-            <li>Solo se mueve <strong>una carta cada vez</strong>.</li>
+            <li>
+              Puedes mover <strong>varias cartas a la vez</strong> siempre que formen una secuencia
+              del mismo palo y consecutiva (p. ej. 9♥ 8♥ 7♥).
+            </li>
             <li>
               Los <strong>ases</strong> abren cada base; sobre ellos se sube 2, 3, 4… del mismo palo.
             </li>
@@ -110,8 +113,9 @@ const RulesModal = ({ onClose }: { onClose: () => void }) => (
         <section className={styles.rulesSection}>
           <h3>Cómo seleccionar</h3>
           <p>
-            Toca una columna. Si solo hay una jugada posible se hace al instante; si hay varias, los
-            destinos válidos se resaltan en verde para que elijas.
+            Toca la carta a partir de la cual quieres mover (arrastra consigo las de encima). Si solo
+            hay una jugada posible se hace al instante; si hay varias, los destinos válidos se
+            resaltan en verde para que elijas.
           </p>
         </section>
       </div>

@@ -37,63 +37,74 @@
 
 .topRow {
   width: 100%;
-  max-width: 900px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--spacing-lg);
-  flex-wrap: wrap;
+  overflow-x: auto;
+  padding-bottom: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
 }
 
+.topRowInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  width: max-content;
+  margin: 0 auto;
+}
+
+/* All eight foundations share a single row. */
 .foundations {
-  display: grid;
-  grid-template-columns: repeat(4, auto);
+  display: flex;
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
   background: var(--bg-table);
   border-radius: var(--radius-md);
 }
 
-.stock {
+.stock,
+.stockEmpty {
   width: 60px;
   height: 84px;
   flex-shrink: 0;
   border-radius: 6px;
-  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.25);
   cursor: pointer;
-  color: var(--color-dark);
-  background: var(--bg-primary-gradient);
-  box-shadow: var(--shadow-primary);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* A cool stacked-deck card back. */
+.stock {
+  color: rgba(255, 255, 255, 0.85);
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.14) 0 5px, transparent 5px 10px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.14) 0 5px, transparent 5px 10px),
+    linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  box-shadow:
+    3px 4px 0 -1px #16294d,
+    5px 7px 0 -2px #16294d,
+    0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .stock:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-primary-hover);
+  box-shadow:
+    3px 4px 0 -1px #16294d,
+    5px 7px 0 -2px #16294d,
+    0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
-.stock:disabled {
-  cursor: not-allowed;
-  background: var(--bg-card);
-  color: var(--color-text-muted);
-  box-shadow: none;
-}
-
-.stockCount {
-  font-size: var(--font-size-2xl);
-  font-weight: bold;
-  line-height: 1;
-}
-
-.stockLabel,
 .stockEmpty {
-  font-size: var(--font-size-xs);
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.25);
+  border-style: dashed;
+}
+
+.stockEmblem {
+  font-size: 30px;
+  line-height: 1;
 }
 
 .boardWrap {
@@ -124,7 +135,7 @@
 .controls {
   display: flex;
   gap: var(--spacing-lg);
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-3xl);
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -245,7 +256,8 @@
 }
 
 @media (max-width: 1100px) {
-  .stock {
+  .stock,
+  .stockEmpty {
     width: 50px;
     height: 70px;
   }
@@ -256,9 +268,13 @@
 }
 
 @media (max-width: 800px) {
-  .stock {
+  .stock,
+  .stockEmpty {
     width: 42px;
     height: 58px;
+  }
+  .stockEmblem {
+    font-size: 22px;
   }
   .column {
     width: 42px;
