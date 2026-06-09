@@ -56,8 +56,9 @@
   top: 4px;
   left: 6px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  gap: 2px;
   line-height: 1;
 }
 
