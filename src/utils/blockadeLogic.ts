@@ -133,14 +133,22 @@ export const cardsOnFoundations = (state: BlockadeGameState): number =>
 export const isWon = (state: BlockadeGameState): boolean =>
   cardsOnFoundations(state) === TOTAL_CARDS;
 
-/** Keys ("col-index") of every card that begins a chunk with a legal move. */
+/**
+ * Keys ("col-index") of every card that can currently move. For each column we
+ * find the deepest run-head that has a legal move and highlight the whole chunk
+ * from there to the top, so a movable group lights up as a single unit.
+ */
 export const getMovableCardKeys = (state: BlockadeGameState): Set<string> => {
   const keys = new Set<string>();
   for (let c = 0; c < NUM_COLUMNS; c++) {
     const pile = state.tableau[c];
+    let groupStart = -1;
     for (let i = pile.length - 1; i >= 0; i--) {
       if (!isMovableRun(pile, i)) break; // deeper cards can't form a run either
-      if (getGroupDestinations(state, c, i).length > 0) keys.add(`${c}-${i}`);
+      if (getGroupDestinations(state, c, i).length > 0) groupStart = i;
+    }
+    if (groupStart >= 0) {
+      for (let i = groupStart; i < pile.length; i++) keys.add(`${c}-${i}`);
     }
   }
   return keys;

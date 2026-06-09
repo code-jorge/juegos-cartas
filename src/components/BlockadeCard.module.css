@@ -84,21 +84,21 @@
 }
 
 .destinationHighlight {
-  box-shadow: 0 0 0 3px var(--color-success), 0 0 12px rgba(76, 175, 80, 0.6);
-  background: rgba(76, 175, 80, 0.22);
+  box-shadow: 0 0 0 2px var(--color-success-light);
+  background: rgba(76, 175, 80, 0.12);
 }
 
 .movableHint {
-  box-shadow: 0 0 0 3px var(--color-primary), 0 0 14px rgba(255, 215, 0, 0.7);
-  animation: blockadeHintPulse 1.4s ease-in-out infinite;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.85);
+  animation: blockadeHintPulse 1.8s ease-in-out infinite;
 }
 
 @keyframes blockadeHintPulse {
   0%, 100% {
-    box-shadow: 0 0 0 3px var(--color-primary), 0 0 12px rgba(255, 215, 0, 0.55);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.45);
   }
   50% {
-    box-shadow: 0 0 0 3px var(--color-primary), 0 0 22px rgba(255, 215, 0, 0.95);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.9);
   }
 }
 
