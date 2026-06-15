@@ -114,6 +114,46 @@ export const applyMove = (
   return next;
 };
 
+/**
+ * Tableau columns that can receive the top card of a foundation, so a card can
+ * be peeled back into the game. Builds DOWN by suit; an empty column takes any
+ * card (only possible once the stock is gone). A single empty column is offered.
+ */
+export const getFoundationCardDestinations = (
+  state: BlockadeGameState,
+  fIndex: number,
+): number[] => {
+  const card = topCard(state.foundations[fIndex]);
+  if (!card) return [];
+  const cols: number[] = [];
+  let emptyColumnOffered = false;
+  for (let c = 0; c < state.tableau.length; c++) {
+    const dst = state.tableau[c];
+    if (dst.length === 0) {
+      if (emptyColumnOffered) continue;
+      emptyColumnOffered = true;
+      cols.push(c);
+      continue;
+    }
+    const top = topCard(dst) as Card;
+    if (top.suit === card.suit && top.rank === card.rank + 1) cols.push(c);
+  }
+  return cols;
+};
+
+/** Move the top card of a foundation back onto a tableau column. */
+export const applyFoundationMove = (
+  state: BlockadeGameState,
+  fIndex: number,
+  destCol: number,
+): BlockadeGameState => {
+  const next = cloneState(state);
+  const card = next.foundations[fIndex].pop();
+  if (!card) return next;
+  next.tableau[destCol].push(card);
+  return next;
+};
+
 /** Deal one stock card on top of each column, left to right, while cards remain. */
 export const dealRow = (state: BlockadeGameState): BlockadeGameState => {
   const next = cloneState(state);

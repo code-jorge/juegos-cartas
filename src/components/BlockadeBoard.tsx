@@ -18,6 +18,7 @@ export const BlockadeBoard = ({ settings, onExit }: Props) => {
     destinationTableau,
     destinationFoundations,
     selectedKeys,
+    selectedFoundation,
     movableKeys,
     placedCount,
     scorePercent,
@@ -66,6 +67,7 @@ export const BlockadeBoard = ({ settings, onExit }: Props) => {
                 key={i}
                 card={topCard(foundation)}
                 placeholder="A"
+                isSelected={selectedFoundation === i}
                 isDestination={destinationFoundations.has(i)}
                 onClick={() => handleFoundationClick(i)}
               />
