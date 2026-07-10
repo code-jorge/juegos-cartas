@@ -1,0 +1,400 @@
+.container {
+  position: relative;
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+  background: var(--bg-gradient);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  margin-top: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.title {
+  color: var(--color-primary);
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--spacing-md);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.stats {
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  display: flex;
+  gap: var(--spacing-xl);
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.stats strong {
+  color: var(--color-primary);
+}
+
+.boardWrap {
+  width: 100%;
+  overflow-x: auto;
+  padding: var(--spacing-md) 0;
+}
+
+.board {
+  --arc-unit: 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  width: max-content;
+  background: var(--bg-table);
+  border-radius: var(--radius-md);
+}
+
+/* One arc of 8 piles; each pile is dipped and tilted to bend around the center. */
+.arc {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+}
+
+.pile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+  min-height: 84px;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  margin: var(--spacing-sm) 0;
+}
+
+.foundationsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: var(--spacing-sm);
+}
+
+.foundationSlot {
+  position: relative;
+}
+
+/* Build direction of the foundation: ▲ aces up, ▼ kings down. */
+.kindBadge {
+  position: absolute;
+  bottom: 3px;
+  right: 5px;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.sideControl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.controlLabel {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.stock,
+.stockEmpty,
+.undoButton {
+  width: 60px;
+  height: 84px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* A cool stacked-deck card back. */
+.stock {
+  color: rgba(255, 255, 255, 0.85);
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.14) 0 5px, transparent 5px 10px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.14) 0 5px, transparent 5px 10px),
+    linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  box-shadow:
+    3px 4px 0 -1px #16294d,
+    5px 7px 0 -2px #16294d,
+    0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.stock:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    3px 4px 0 -1px #16294d,
+    5px 7px 0 -2px #16294d,
+    0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.stockEmpty {
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.25);
+  border-style: dashed;
+}
+
+.stockEmblem {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.undoButton {
+  color: rgba(255, 255, 255, 0.85);
+  background: var(--bg-glass);
+}
+
+.undoButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--bg-glass-dark);
+}
+
+.undoButton:disabled {
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.3);
+  border-style: dashed;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.undoEmblem {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.countBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-dark);
+  font-size: var(--font-size-xs);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+/* The card being dragged, following the pointer. */
+.ghost {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  transform: scale(1.05) rotate(2deg);
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
+}
+
+.controls {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.scoreDisplay {
+  margin: var(--spacing-lg) 0;
+  text-align: center;
+}
+
+.scoreValue {
+  display: inline-block;
+  color: var(--color-primary);
+  font-size: 56px;
+  font-weight: bold;
+  line-height: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.statsList {
+  list-style: none;
+  padding: 0;
+  margin: var(--spacing-xl) 0;
+  text-align: center;
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+}
+
+.statsList li {
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.6;
+}
+
+.statsList strong {
+  color: var(--color-primary);
+}
+
+.modalButtons {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.secondaryButton {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  background: transparent;
+  color: var(--color-text);
+  transition: var(--transition-fast);
+}
+
+.secondaryButton:hover {
+  background: var(--bg-glass);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.primaryButton {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  background: var(--bg-primary-gradient);
+  color: var(--color-dark);
+  box-shadow: var(--shadow-primary);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.primaryButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary-hover);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  z-index: 100;
+}
+
+.modal {
+  background: var(--bg-gradient);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  color: var(--color-text);
+  max-width: 520px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modalTitle {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.modalText {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.5;
+}
+
+@media (max-width: 1100px) {
+  .board {
+    --arc-unit: 0.85px;
+  }
+  .pile {
+    width: 50px;
+    min-height: 70px;
+  }
+  .stock,
+  .stockEmpty,
+  .undoButton {
+    width: 50px;
+    height: 70px;
+  }
+}
+
+@media (max-width: 800px) {
+  .board {
+    --arc-unit: 0.7px;
+  }
+  .pile {
+    width: 42px;
+    min-height: 58px;
+  }
+  .stock,
+  .stockEmpty,
+  .undoButton {
+    width: 42px;
+    height: 58px;
+  }
+  .stockEmblem,
+  .undoEmblem {
+    font-size: 22px;
+  }
+  .countBadge {
+    min-width: 18px;
+    height: 18px;
+    top: -6px;
+    right: -6px;
+  }
+  .center {
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  .header {
+    margin-top: var(--spacing-3xl);
+  }
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+  .stats {
+    font-size: var(--font-size-sm);
+    gap: var(--spacing-md);
+  }
+  .board {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  .arc {
+    gap: 4px;
+  }
+  .controls {
+    flex-direction: column;
+    width: 100%;
+  }
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+  }
+}

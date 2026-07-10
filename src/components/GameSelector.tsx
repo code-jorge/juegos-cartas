@@ -28,6 +28,11 @@ const GAMES: GameOption[] = [
     title: 'Blockade',
     subtitle: 'Solitario a dos barajas: del As al Rey',
   },
+  {
+    path: '/crescent',
+    title: 'Crescent',
+    subtitle: 'Solitario en media luna a dos barajas',
+  },
 ];
 
 export const GameSelector = () => {
