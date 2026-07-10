@@ -184,6 +184,7 @@ export const CrescentBoard = ({ settings, onExit }: Props) => {
               <CrescentCard
                 key={card.id}
                 card={card}
+                faceDown={!isTop}
                 isStacked={idx > 0}
                 isDropHint={isTop && dropPiles.has(index)}
                 isLiftable={isTop && state.status === 'playing'}

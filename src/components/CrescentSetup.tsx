@@ -80,7 +80,8 @@ const RulesModal = ({ onClose }: { onClose: () => void }) => (
           <p>
             Alrededor de las bases hay <strong>16 montones de 6 cartas</strong> formando una media
             luna: 8 arriba y 8 abajo. Solo la <strong>carta superior</strong> de cada montón está en
-            juego; las esquinas de las cartas tapadas te dicen cuántas quedan debajo.
+            juego; los bordes de las cartas tapadas te dicen cuántas quedan debajo, pero no cuáles
+            son.
           </p>
         </section>
         <section className={styles.rulesSection}>

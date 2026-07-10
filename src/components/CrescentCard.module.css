@@ -27,9 +27,18 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
 }
 
-/* Cards fanned downward so the corner of every buried card stays visible. */
+/* Buried cards show only a thin card-back edge, enough to count them. */
+.back {
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.14) 0 5px, transparent 5px 10px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.14) 0 5px, transparent 5px 10px),
+    linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
 .stacked {
-  margin-top: -60px;
+  margin-top: -76px;
 }
 
 .slot {
@@ -88,7 +97,7 @@
     height: 70px;
   }
   .stacked {
-    margin-top: -50px;
+    margin-top: -63px;
   }
   .rank {
     font-size: 14px;
@@ -110,7 +119,7 @@
     height: 58px;
   }
   .stacked {
-    margin-top: -42px;
+    margin-top: -52px;
   }
   .corner {
     top: 2px;

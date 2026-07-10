@@ -26,6 +26,8 @@ const RANK_LABEL: Record<number, string> = {
 
 interface Props {
   card: Card | null;
+  /** Buried pile card: shows a card back edge so it can be counted but not read. */
+  faceDown?: boolean;
   isStacked?: boolean;
   isDropHint?: boolean;
   /** Draggable card: grab cursor and no touch scrolling so the drag can start. */
@@ -38,6 +40,7 @@ interface Props {
 
 export const CrescentCard = ({
   card,
+  faceDown = false,
   isStacked = false,
   isDropHint = false,
   isLiftable = false,
@@ -53,6 +56,12 @@ export const CrescentCard = ({
         {placeholder && <span className={styles.placeholder}>{placeholder}</span>}
       </div>
     );
+  }
+
+  if (faceDown) {
+    const classes = [styles.cell, styles.back];
+    if (isStacked) classes.push(styles.stacked);
+    return <div className={classes.join(' ')} aria-label="face-down card" />;
   }
 
   const isRed = card.suit === 'hearts' || card.suit === 'diamonds';
